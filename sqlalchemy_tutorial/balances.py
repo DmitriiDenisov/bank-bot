@@ -11,7 +11,7 @@ class Balance(Base):
 
     id = Column(Integer, primary_key=True)
     customer_id = Column(Integer, ForeignKey('customers.id'))
-    # customer = relationship("Customer", foreign_keys=[customer_id])
+    customer = relationship("Customer", foreign_keys=[customer_id])
     usd_bal = Column(Float)
     eur_bal = Column(Float)
     aed_bal = Column(Float)

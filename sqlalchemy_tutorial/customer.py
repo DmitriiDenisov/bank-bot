@@ -15,5 +15,5 @@ class Customer(Base):
     nickname_telegram = Column(String)
     join_date = Column(Date)
 
-    balance = relationship("Balance", backref="customer", uselist=False)
+    # balance = relationship("Balance", backref="customer", uselist=False)
     # trans = relationship("Transaction", uselist=True)
