@@ -15,11 +15,13 @@ Base.metadata.create_all(engine)
 # 3 - create a new session
 session = Session()
 
-session.query(Balance).filter(Balance.id == 24).update(
-    {"aed_bal": (Balance.aed_bal + 1), "eur_bal": (Balance.eur_bal + 2)})
-# session.commit()
-
+session.query(Customer).filter((Customer.id >= 12) | (Customer.second_name == 'Alchemy2')).delete()
 
 # 10 - commit and close session
 session.commit()
 session.close()
+
+
+
+
+
