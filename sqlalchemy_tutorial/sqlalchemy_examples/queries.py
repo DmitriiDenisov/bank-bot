@@ -6,9 +6,9 @@ import pandas as pd
 from sqlalchemy_tutorial.base import Session
 # from sqlalchemy_tutorial.contact_details import ContactDetails
 # from sqlalchemy_tutorial.movie import Movie
-from sqlalchemy_tutorial.customer import Customer
-from sqlalchemy_tutorial.balances import Balance
-from sqlalchemy_tutorial.transactions import Transaction
+from sqlalchemy_tutorial.models.customer import Customer
+from sqlalchemy_tutorial.models.balances import Balance
+from sqlalchemy_tutorial.models.transactions import Transaction
 from sqlalchemy import case
 from sqlalchemy import func
 

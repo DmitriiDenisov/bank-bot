@@ -2,7 +2,7 @@
 
 from sqlalchemy import Column, String, Integer, Date, Float, ForeignKey
 from sqlalchemy.orm import relationship, backref
-
+from sqlalchemy_tutorial.models.customer import Customer
 from sqlalchemy_tutorial.base import Base
 
 
