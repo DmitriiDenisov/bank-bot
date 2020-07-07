@@ -15,9 +15,9 @@ from sqlalchemy import func
 # 2. Extract a session
 session = Session()
 
-
 # 3. Simple Select *
-all_bal = session.query(Balance)
+all_cust = session.query(Customer).all()
+all_bal = session.query(Balance).all()
 all_trans = session.query(Transaction).all()
 for trans in all_trans:
     pass
