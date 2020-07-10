@@ -1,16 +1,28 @@
 # Previous imports remain...
+from functools import wraps
+
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask import Flask, request, abort
+from flask import Flask, request, abort, jsonify
 from marshmallow import Schema, fields, ValidationError
 from base import Session
 from models.balances import Balance
 from models.customer import Customer
 from datetime import date
+import jwt
+
+from token_auth import token_auth
 
 session = Session()
 
 app = Flask(__name__)
+app.config['PUBLIC_KEY'] = """"""
+app.config['PRIVATE_KEY'] = """"""
+
+
+# encoded = jwt.encode({'some': 'Dmitry Denisov'}, priv_key, algorithm='RS256')
+# print(encoded)
+# decoded = jwt.decode(encoded, pub_key, algorithms='RS256')
 
 
 class TaskParamsSchema(Schema):
@@ -18,11 +30,12 @@ class TaskParamsSchema(Schema):
     second_name = fields.Str(required=True)
     nick = fields.Str(required=True)
     join_date = fields.Date(required=True)
+    token = fields.Str(required=True)
 
 
 @app.route('/me', methods=['GET'])
+@token_auth(app.config['PUBLIC_KEY'])
 def get_me():
-    # custs = session.query(Customer).filter(Customer.first_name == 'Dmitry')
     custs = session.query(Customer).filter(Customer.id == 7)
     results = [
         {
@@ -35,6 +48,7 @@ def get_me():
 
 
 @app.route('/custs', methods=['GET'])
+@token_auth(app.config['PUBLIC_KEY'])
 def get_all_custs():
     # custs = session.query(Customer).filter(Customer.first_name == 'Dmitry')
     custs = session.query(Customer)
@@ -49,6 +63,7 @@ def get_all_custs():
 
 
 @app.route('/add_new_user', methods=['POST'])
+@token_auth(app.config['PUBLIC_KEY'])
 def new_customer():
     try:
         params = TaskParamsSchema().loads(request.data.decode("utf-8"))
@@ -66,6 +81,7 @@ def new_customer():
 
 
 @app.route('/delete_user', methods=['POST'])
+@token_auth
 def del_cust():
     q = request.data
     new_user = Customer('Postamn', 'postmanov', '@post', date(2020, 10, 11))

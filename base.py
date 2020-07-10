@@ -5,14 +5,13 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 try:
-    with open("../../credentials") as cred:
+    with open("credentials") as cred:
         url = cred.readline()
 except:
     pass
 
-engine = create_engine("...")
+engine = create_engine(url)
 Session = sessionmaker(bind=engine)
 # 2. Extract a session
 session = Session()
 Base = declarative_base()
-print(type(Base))
