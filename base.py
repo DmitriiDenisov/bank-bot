@@ -5,7 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 try:
-    with open("credentials") as cred:
+    with open("credentials/credentials_db") as cred:
         url = cred.readline()
 except:
     pass

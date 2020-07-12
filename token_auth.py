@@ -17,7 +17,7 @@ def token_auth(pub_key):
                 data = jwt.decode(token, pub_key)
             except:
                 return jsonify({'message': 'token is invalid'})
-            return f(*args, **kwargs)
+            return f(data, *args, **kwargs)
 
         return decorator
     return token_auth

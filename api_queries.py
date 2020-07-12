@@ -16,8 +16,12 @@ from token_auth import token_auth
 session = Session()
 
 app = Flask(__name__)
-app.config['PUBLIC_KEY'] = """"""
-app.config['PRIVATE_KEY'] = """"""
+
+with open("credentials/public_key") as f:
+    app.config['PUBLIC_KEY'] = f.readline()
+
+with open("credentials/private_key") as f:
+    app.config['PRIVATE_KEY'] = ''.join(f.readlines())
 
 
 # encoded = jwt.encode({'some': 'Dmitry Denisov'}, priv_key, algorithm='RS256')
@@ -35,7 +39,7 @@ class TaskParamsSchema(Schema):
 
 @app.route('/me', methods=['GET'])
 @token_auth(app.config['PUBLIC_KEY'])
-def get_me():
+def get_me(data):
     custs = session.query(Customer).filter(Customer.id == 7)
     results = [
         {
