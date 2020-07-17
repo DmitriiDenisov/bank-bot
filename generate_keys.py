@@ -26,16 +26,3 @@ with open("credentials/private_key", "wb") as f:
 with open("credentials/public_key", "wb") as f:
     f.write(public_key)
 
-
-token = jwt.encode({'some': 'payload', 'user_id': 1, 'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=2),
-                    'iat': datetime.datetime.utcnow()}, headers={'kid': uuid.uuid4().hex},
-                   key=private_key,
-                   algorithm='RS256')
-
-time.sleep(4)
-
-# Get header from token:
-header = jwt.get_unverified_header(token)
-
-# Get payload from token:
-decoded = jwt.decode(token, public_key, algorithms='RS256')

@@ -5,15 +5,15 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask import Flask, request, abort, jsonify
 from marshmallow import Schema, fields, ValidationError
-from base import Session
+from base import session
+from generate_token import add_user, get_token
+from models.Passwords import Password
 from models.balances import Balance
 from models.customer import Customer
 from datetime import date
 import jwt
 
 from token_auth import token_auth
-
-session = Session()
 
 app = Flask(__name__)
 
@@ -39,7 +39,7 @@ class TaskParamsSchema(Schema):
 
 @app.route('/me', methods=['GET'])
 @token_auth(app.config['PUBLIC_KEY'])
-def get_me(data):
+def get_me():
     custs = session.query(Customer).filter(Customer.id == 7)
     results = [
         {
@@ -49,6 +49,18 @@ def get_me(data):
         } for cust in custs]
 
     return {"count": len(results), "custs": results}
+
+
+@app.route('/sign_up', methods=['POST'])
+def sign_up():
+    data = request.json
+
+    if session.query(Password).filter(Password.user_email == data['user_email']).first():
+        return {'resp': 'User alredy exists!'}
+    else:
+        add_user(data['user_email'], data['user_password'])
+        token = get_token(data['user_email'])
+        return {'resp': token.decode('utf-8')}
 
 
 @app.route('/custs', methods=['GET'])
