@@ -65,7 +65,7 @@ def auth():
         return {'message': 'Not found such user!'}
     if not check_password(params['user_pass'], cust_pass.user_pass):
         return {'message': 'User password does not match!'}
-    return {'token': get_token(cust_pass.user_email)}
+    return {'token': get_token(cust_pass.user_email).decode('utf-8')}
 
 
 # Get info about all customers

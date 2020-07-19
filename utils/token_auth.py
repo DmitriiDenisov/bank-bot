@@ -29,7 +29,7 @@ def token_auth(pub_key):
                 return jsonify({'message': 'Signature has expired! Try auth method'})
             except:
                 return jsonify({'message': 'token is invalid'})
-            return f(data, *args, **kwargs)
+            return f(*args, **kwargs)
 
         return decorator
     return token_auth
