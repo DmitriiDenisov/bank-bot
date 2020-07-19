@@ -1,9 +1,9 @@
 # coding=utf-8
 
-from sqlalchemy import Column, String, Integer, Date, ForeignKey
+from sqlalchemy import Column, String, Integer, ForeignKey
 from sqlalchemy.orm import relationship, backref
 
-from base import Base
+from utils.base import Base
 
 
 class Password(Base):

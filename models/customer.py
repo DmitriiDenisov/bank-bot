@@ -1,9 +1,8 @@
 # coding=utf-8
 
 from sqlalchemy import Column, String, Integer, Date
-from sqlalchemy.orm import relationship
 
-from base import Base
+from utils.base import Base
 
 
 class Customer(Base):

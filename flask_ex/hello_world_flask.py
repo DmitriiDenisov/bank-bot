@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request, abort
+
 app = Flask(__name__)
 
 
@@ -10,4 +11,4 @@ def hello_world():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0',
-            port=5001)  # host позволяет дать глобальный доступ для устройств в сети. Адрес в общем виде: http://<ip_addess>:5000. http://172.20.10.2:5000/
+            port=5001)  # host='0.0.0.0' allows global access: http://<ip_addess>:5001. http://172.20.10.2:5001/

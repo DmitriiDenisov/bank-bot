@@ -1,9 +1,9 @@
 # coding=utf-8
 
-from sqlalchemy import Column, String, Integer, Date, Float, ForeignKey
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy import Column, Integer, Float, ForeignKey
+from sqlalchemy.orm import relationship
 
-from base import Base
+from utils.base import Base
 
 
 class Transaction(Base):
