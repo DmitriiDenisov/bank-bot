@@ -1,16 +1,23 @@
-from marshmallow import Schema, fields, ValidationError
+from wtforms import PasswordField, validators, Form, StringField, DateField
+from wtforms.fields.html5 import EmailField
+import wtforms_json
+
+wtforms_json.init()
 
 
-# Schemas for Flask API, it allows to automatically check if required parameters are passed and they have correct type
-
-class TaskParamsSchema(Schema):
-    first_name = fields.Str(required=True)
-    second_name = fields.Str(required=True)
-    nick = fields.Str(required=True)
-    join_date = fields.Date(required=True)
-    token = fields.Str(required=True)
+class SignUpSchema(Form):
+    username = EmailField('username', [validators.DataRequired(), validators.Email(), validators.Length(min=4, max=20)])
+    password = PasswordField('password', [validators.DataRequired()])
 
 
-class AuthSignSchema(Schema):
-    user_email = fields.Str(required=True)
-    user_pass = fields.Str(required=True)
+class AuthSchemaForm(Form):
+    username = EmailField('username', [validators.DataRequired(), validators.Email(), validators.Length(min=4, max=20)])
+    password = PasswordField('password', [validators.DataRequired()])
+
+
+class TaskParamsSchema(Form):
+    first_name = StringField('first_name', [validators.DataRequired()])
+    second_name = StringField('second_name', [validators.DataRequired()])
+    nick = StringField('nick', [validators.DataRequired()])
+    join_date = DateField('join_date', [validators.DataRequired()])
+    token = StringField('token')
