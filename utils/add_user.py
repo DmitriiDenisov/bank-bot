@@ -9,14 +9,16 @@ from utils.base import session
 def add_user(user_email, user_pass):
     hashed_pass = get_hashed_password(user_pass)
     # ADD to DB new customer
-    new_cut = Customer('New_user', 'flask', '@test', datetime.date(2020, 7, 19))
+    new_cust = Customer('New_user', 'flask', '@test', datetime.datetime.utcnow())
     # ADD new bal to user
-    new_bal = Balance(new_cut, 0, 0, 0)
+    new_bal = Balance(new_cust, 0, 0, 0)
     # ADD new password
-    new_pass = Password(new_cut, user_email, hashed_pass)
+    new_pass = Password(new_cust, user_email, hashed_pass)
     # add_all is similar to git add ...
-    session.add_all([new_cut])
+    session.add_all([new_cust])
     # flush is similar to git commit ...
     session.flush()
     # commit is similar to git push ...
     session.commit()
+
+    return new_cust.id

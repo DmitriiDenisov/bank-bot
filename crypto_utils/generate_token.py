@@ -1,10 +1,13 @@
 import datetime
 import uuid
 import jwt
-from utils.constants import PRIVATE_KEY
+
+from models.Token import Token
+from utils.base import session
+from utils.constants import PRIVATE_KEY, ALG
 
 
-def get_token(user_email: str):
+def get_token(user_email: str, customer_id: int):
     """
     Function generates jwt token. Payload - user_email, creation date of token and exp date
     Header - uuid of Token
@@ -12,9 +15,18 @@ def get_token(user_email: str):
     :param user_email: email of customer/user
     :return: token
     """
-    token = jwt.encode({'user_email': user_email, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=3),
-                        'iat': datetime.datetime.utcnow()}, headers={'kid': uuid.uuid4().hex},
+    creation_date = datetime.datetime.utcnow()
+    exp_date = datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
+    token_uuid = uuid.uuid4().hex
+
+    token = jwt.encode(payload={'user_email': user_email, 'customer_id': customer_id,
+                                'exp': exp_date,
+                                'iat': creation_date}, headers={'kid': token_uuid},
                        key=PRIVATE_KEY,
-                       algorithm='RS256')
-    # TODO: save token to DB - tokens
+                       algorithm=ALG)
+    # Add token to DB
+    new_token = Token(customer_id, token_uuid, creation_date, exp_date)
+    session.add_all([new_token])
+    session.flush()
+    session.commit()
     return token

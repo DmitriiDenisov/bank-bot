@@ -22,8 +22,8 @@ public_key = key.public_key().public_bytes(
     crypto_serialization.PublicFormat.OpenSSH
 )
 
-with open(os.path.join(PROJECT_PATH, 'credentials', 'private_key'), "wb") as f:
+with open(os.path.join(PROJECT_PATH, 'credentials', 'private_key_RS256'), "wb") as f:
     f.write(private_key)
 
-with open(os.path.join(PROJECT_PATH, 'credentials', 'public_key'), "wb") as f:
+with open(os.path.join(PROJECT_PATH, 'credentials', 'public_key_RS256'), "wb") as f:
     f.write(public_key)

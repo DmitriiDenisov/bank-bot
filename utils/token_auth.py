@@ -1,7 +1,10 @@
+from collections import namedtuple
 from functools import wraps
 from jwt.exceptions import ExpiredSignatureError
 import jwt
 from flask import request, jsonify
+
+TokenData = namedtuple('TokenData', ['user_email', 'customer_id', 'exp', 'iat'])
 
 
 def token_auth(pub_key):
@@ -24,12 +27,18 @@ def token_auth(pub_key):
             # 6. Receiver calculates hash(X), where X is received message
             # 7. Compare result from 6 and 7. If equal => legitimate
             try:
+                # Get Payload
                 data = jwt.decode(token, pub_key)
             except ExpiredSignatureError:
                 return jsonify({'message': 'Signature has expired! Try auth method'})
             except:
                 return jsonify({'message': 'token is invalid'})
-            return f(*args, **kwargs)
+
+            # Transfer payload to namedtuple
+            data = TokenData(**data)
+
+            return f(data, *args, **kwargs)
 
         return decorator
+
     return token_auth

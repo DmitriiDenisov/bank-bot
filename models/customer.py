@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from sqlalchemy import Column, String, Integer, Date
+from sqlalchemy import Column, String, Integer, Date, DateTime
 
 from utils.base import Base
 
@@ -12,7 +12,7 @@ class Customer(Base):
     first_name = Column(String)
     second_name = Column(String)
     nickname_telegram = Column(String)
-    join_date = Column(Date)
+    join_date = Column(DateTime)
 
     # balance = relationship("Balance", backref="customer", uselist=False)
     # trans = relationship("Transaction", uselist=True)
