@@ -3,7 +3,7 @@ from flask import jsonify, make_response
 
 from models.transactions import Transaction
 from utils.constants import PRIVATE_KEY
-from utils.schemas import TaskParamsSchema, AuthSchemaForm, SignUpSchema
+from utils.schemas import TaskParamsSchema, AuthSchemaForm, SignUpSchema, ForgotPass, PasswordForm
 from utils.add_user import add_user
 from utils.base import session
 from crypto_utils.generate_token import get_token
@@ -12,29 +12,70 @@ from models.Passwords import Password
 from models.balances import Balance
 from models.customer import Customer
 from datetime import date
-
+from flask import redirect, url_for, render_template
 from utils.token_auth import token_auth, TokenData
 
 # Define Flask app
-app = Flask(__name__)
+app = Flask(__name__, template_folder='templates')
 # app.config['PUBLIC_KEY'] = PUBLIC_KEY
 app.config['PRIVATE_KEY'] = PRIVATE_KEY
 
 
+@app.route('/reset', methods=['GET'])
+def reset():
+    form = ForgotPass.from_json(request.json)
+    if not form.validate():
+        return abort(400)
+
+    cust: Password = session.query(Password).filter(Password.user_email == form.username.data).first()
+    if cust:
+        token = get_token(cust.user_email, cust.customer_id, temp_access=True)
+        recover_url = url_for(
+            'reset_with_token',
+            token=token,
+            _external=True)
+        return jsonify({'recover_link': recover_url})
+    else:
+        return jsonify({'message': 'User not found!'})
+
+
 @app.route('/reset_with_token', methods=['GET'])
-def reset_with_token():
+@token_auth(app.config['PRIVATE_KEY'])
+def reset_with_token(data: TokenData):
     return jsonify({'success': True})
+
+
+@app.route('/')
+def home():
+    return "Hello, World!"  # return a string
+
+
+@app.route('/welcome')
+def welcome():
+    return render_template('welcome.html')  # render a template
+
+
+@app.route('/login_test', methods=['GET', 'POST'])
+# Route for handling the login page logic
+def login_test():
+    error = None
+    if request.method == 'POST':
+        if request.form['username'] != 'admin' or request.form['password'] != 'admin':
+            error = 'Invalid Credentials. Please try again.'
+        else:
+            return redirect(url_for('home'))
+    # return render_template('register.html', error=error)
+    return render_template('login.html', title='Register', error=error)
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    return render_template('register.html', title='Register')
 
 # Get info about me
 # token_auth decorator checks that token is valid
 @app.route('/me', methods=['GET'])
 @token_auth(app.config['PRIVATE_KEY'])
 def get_me(data: TokenData):
-    recover_url = url_for(
-        'reset_with_token',
-        token='sd',
-        _external=True)
-
     custs = session.query(Customer).filter(Customer.id == data.customer_id)
     results = [
         {
@@ -58,7 +99,7 @@ def sign_up():
         return jsonify({'resp': 'User alredy exists!'})
     else:
         customer_id = add_user(form.username.data, form.password.data)
-        token = get_token(form.username.data, customer_id)
+        token = get_token(form.username.data, customer_id, temp_access=False)
         return jsonify({'resp': token.decode('utf-8')})
 
 
@@ -75,7 +116,7 @@ def auth():
     if not check_password(params.password.data, cust_pass.user_pass):
         return make_response('User password does not match!', 401,
                              {'WWW.Authentication': 'Basic realm: "login required"'})
-    return jsonify({'token': get_token(cust_pass.user_email, cust_pass.customer_id).decode('utf-8')})
+    return jsonify({'token': get_token(cust_pass.user_email, cust_pass.customer_id, temp_access=False).decode('utf-8')})
 
 
 # Get info about all customers

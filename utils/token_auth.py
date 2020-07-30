@@ -4,7 +4,7 @@ from jwt.exceptions import ExpiredSignatureError
 import jwt
 from flask import request, jsonify
 
-TokenData = namedtuple('TokenData', ['user_email', 'customer_id', 'exp', 'iat'])
+TokenData = namedtuple('TokenData', ['user_email', 'customer_id', 'exp', 'iat', 'temp_access'])
 
 
 def token_auth(pub_key):
@@ -15,6 +15,8 @@ def token_auth(pub_key):
             # check if token is in headers
             if 'key' in request.headers:
                 token = request.headers['key']
+            elif f.__name__ == 'reset_with_token' and 'token' in request.args:
+                token = request.args['token']
             if not token:
                 return jsonify({'message': 'a valid token is missing'})
             # Try to decode token (only get payload, header and verify signature)
@@ -37,6 +39,8 @@ def token_auth(pub_key):
             # Transfer payload to namedtuple
             data = TokenData(**data)
 
+            if f.__name__ != 'reset_with_token' and data.temp_access:
+                return jsonify({'message': 'Token does not have access to this method!'})
             return f(data, *args, **kwargs)
 
         return decorator

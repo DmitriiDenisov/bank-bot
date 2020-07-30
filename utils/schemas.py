@@ -21,3 +21,8 @@ class TaskParamsSchema(Form):
     nick = StringField('nick', [validators.DataRequired()])
     join_date = DateField('join_date', [validators.DataRequired()])
     token = StringField('token')
+
+
+class ForgotPass(Form):
+    username = EmailField('username', [validators.DataRequired()])
+

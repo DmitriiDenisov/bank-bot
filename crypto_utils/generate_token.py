@@ -7,7 +7,7 @@ from utils.base import session
 from utils.constants import PRIVATE_KEY, ALG
 
 
-def get_token(user_email: str, customer_id: int):
+def get_token(user_email: str, customer_id: int, temp_access: bool):
     """
     Function generates jwt token. Payload - user_email, creation date of token and exp date
     Header - uuid of Token
@@ -19,7 +19,7 @@ def get_token(user_email: str, customer_id: int):
     exp_date = datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
     token_uuid = uuid.uuid4().hex
 
-    token = jwt.encode(payload={'user_email': user_email, 'customer_id': customer_id,
+    token = jwt.encode(payload={'user_email': user_email, 'customer_id': customer_id, 'temp_access': temp_access,
                                 'exp': exp_date,
                                 'iat': creation_date}, headers={'kid': token_uuid},
                        key=PRIVATE_KEY,
