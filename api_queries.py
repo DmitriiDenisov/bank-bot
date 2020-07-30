@@ -3,7 +3,7 @@ from flask import jsonify, make_response
 
 from models.transactions import Transaction
 from utils.constants import PRIVATE_KEY
-from utils.schemas import TaskParamsSchema, AuthSchemaForm, SignUpSchema, ForgotPass, PasswordForm
+from utils.schemas import TaskParamsSchema, AuthSchemaForm, SignUpSchema, ForgotPass
 from utils.add_user import add_user
 from utils.base import session
 from crypto_utils.generate_token import get_token
