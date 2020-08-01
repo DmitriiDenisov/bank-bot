@@ -1,13 +1,15 @@
 from wtforms import PasswordField, validators, Form, StringField, DateField
 from wtforms.fields.html5 import EmailField
 import wtforms_json
+from wtforms.validators import EqualTo, InputRequired
 
 wtforms_json.init()
 
 
 class SignUpSchema(Form):
-    username = EmailField('username', [validators.DataRequired(), validators.Email(), validators.Length(min=4, max=20)])
-    password = PasswordField('password', [validators.DataRequired()])
+    email = EmailField('email', [validators.DataRequired(), validators.Email(), validators.Length(min=4, max=20)])
+    password = PasswordField('password', [InputRequired(), EqualTo('confirm', message='Passwords must match')])
+    confirm = PasswordField('confirm')
 
 
 class AuthSchemaForm(Form):
@@ -24,5 +26,9 @@ class TaskParamsSchema(Form):
 
 
 class ForgotPass(Form):
-    username = EmailField('username', [validators.DataRequired()])
+    email = EmailField('email', [validators.DataRequired()])
 
+
+class ResetPass(Form):
+    password1 = PasswordField('password1', [InputRequired(), EqualTo('password2', message='Passwords must match')])
+    password2 = PasswordField('password2')

@@ -3,11 +3,11 @@ from flask import jsonify, make_response
 
 from models.transactions import Transaction
 from utils.constants import PRIVATE_KEY
-from utils.schemas import TaskParamsSchema, AuthSchemaForm, SignUpSchema, ForgotPass
+from utils.schemas import TaskParamsSchema, AuthSchemaForm, SignUpSchema, ForgotPass, ResetPass
 from utils.add_user import add_user
 from utils.base import session
 from crypto_utils.generate_token import get_token
-from crypto_utils.hash_password import check_password
+from crypto_utils.hash_password import check_password, get_hashed_password
 from models.Passwords import Password
 from models.balances import Balance
 from models.customer import Customer
@@ -16,60 +16,95 @@ from flask import redirect, url_for, render_template
 from utils.token_auth import token_auth, TokenData
 
 # Define Flask app
-app = Flask(__name__, template_folder='templates')
+app = Flask(__name__, template_folder='templates', static_folder='static')
 # app.config['PUBLIC_KEY'] = PUBLIC_KEY
 app.config['PRIVATE_KEY'] = PRIVATE_KEY
 
 
-@app.route('/reset', methods=['GET'])
-def reset():
-    form = ForgotPass.from_json(request.json)
-    if not form.validate():
-        return abort(400)
+# Sign_up method. It receives login-pass, checks that this user does not exist, if exists then add it to DB and create token for him
+@app.route('/sign_up', methods=['GET', 'POST'])
+def sign_up():
+    if request.method == 'POST':
+        form = SignUpSchema(request.form)
+        # form.password
+        if not form.validate():
+            if form.errors.get('password'):
+                return jsonify({'resp': form.errors.get('password')[0]})
+            else:
+                return jsonify({'resp': form.errors.get('email')[0]})
+                # return abort(400)
 
-    cust: Password = session.query(Password).filter(Password.user_email == form.username.data).first()
-    if cust:
-        token = get_token(cust.user_email, cust.customer_id, temp_access=True)
-        recover_url = url_for(
-            'reset_with_token',
-            token=token,
-            _external=True)
-        return jsonify({'recover_link': recover_url})
-    else:
-        return jsonify({'message': 'User not found!'})
-
-
-@app.route('/reset_with_token', methods=['GET'])
-@token_auth(app.config['PRIVATE_KEY'])
-def reset_with_token(data: TokenData):
-    return jsonify({'success': True})
+        if session.query(Password).filter(Password.user_email == form.email.data).first():
+            return jsonify({'resp': 'User alredy exists!'})
+        else:
+            customer_id = add_user(form.email.data, form.password.data)
+            token = get_token(form.email.data, customer_id, temp_access=False)
+            return jsonify({'resp': token.decode('utf-8')})
+    return render_template('register.html', title='Register')
 
 
-@app.route('/')
-def home():
-    return "Hello, World!"  # return a string
-
-
-@app.route('/welcome')
-def welcome():
-    return render_template('welcome.html')  # render a template
-
-
-@app.route('/login_test', methods=['GET', 'POST'])
-# Route for handling the login page logic
-def login_test():
+# Auth method. Called if previous token has expired. Checks that user exist in DB and password matches and creates new token
+@app.route('/auth', methods=['GET', 'POST'])
+def auth():
     error = None
     if request.method == 'POST':
-        if request.form['username'] != 'admin' or request.form['password'] != 'admin':
+        form = AuthSchemaForm(request.form)
+        if not form.validate():
+            # return abort(400)
+            error = 'Username does not match email pattern'
+            return render_template('login.html', error=error)
+        cust_pass = session.query(Password).filter((Password.user_email == form.username.data)).first()
+        if not cust_pass:
             error = 'Invalid Credentials. Please try again.'
-        else:
-            return redirect(url_for('home'))
-    # return render_template('register.html', error=error)
-    return render_template('login.html', title='Register', error=error)
+            return render_template('login.html', error=error)
+            # return make_response('Not found such user!', 401, {'WWW.Authentication': 'Basic realm: "login required"'})
+        if not check_password(form.password.data, cust_pass.user_pass):
+            error = 'Invalid Credentials. Please try again.'
+            return render_template('login.html', error=error)
+            # return make_response('User password does not match!', 401,
+            #                     {'WWW.Authentication': 'Basic realm: "login required"'})
+        return jsonify(
+            {'token': get_token(cust_pass.user_email, cust_pass.customer_id, temp_access=False).decode('utf-8')})
+    return render_template('login.html', error=error)
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    return render_template('register.html', title='Register')
+
+@app.route('/forgot', methods=['GET', 'POST'])
+def forgot():
+    if request.method == 'POST':
+        form = ForgotPass(request.form)
+        if not form.validate():
+            return jsonify({'message': 'Not valid email!'})
+
+        cust: Password = session.query(Password).filter(Password.user_email == form.email.data).first()
+        if cust:
+            token = get_token(cust.user_email, cust.customer_id, temp_access=True)
+            recover_url = url_for(
+                'reset_with_token',
+                token=token,
+                _external=True)
+            return jsonify({'recover_link': recover_url})
+        else:
+            return jsonify({'message': 'User not found!'})
+    else:
+        return render_template('forgot_pass.html')
+
+
+@app.route('/reset_with_token', methods=['GET', 'POST'])
+@token_auth(app.config['PRIVATE_KEY'])
+def reset_with_token(data: TokenData):
+    if request.method == 'POST':
+        form = ResetPass(request.form)
+        if not form.validate():
+            return jsonify({'resp': form.errors.get('password1')[0]})
+
+        hashed_pass = get_hashed_password(form.password1.data)
+        session.query(Password).filter(Password.customer_id == data.customer_id).update({"user_pass": hashed_pass})
+        session.flush()
+        session.commit()
+
+        return jsonify({'resp': 'success'})
+    return render_template('reset_pass.html')
+
 
 # Get info about me
 # token_auth decorator checks that token is valid
@@ -85,38 +120,6 @@ def get_me(data: TokenData):
         } for cust in custs]
 
     return jsonify({"count": len(results), "custs": results})
-
-
-# Sign_up method. It receives login-pass, checks that this user does not exist, if exists then add it to DB and create token for him
-@app.route('/sign_up', methods=['POST'])
-def sign_up():
-    form = SignUpSchema(request.headers)
-    # form.password
-    if not form.validate():
-        return abort(400)
-
-    if session.query(Password).filter(Password.user_email == form.username.data).first():
-        return jsonify({'resp': 'User alredy exists!'})
-    else:
-        customer_id = add_user(form.username.data, form.password.data)
-        token = get_token(form.username.data, customer_id, temp_access=False)
-        return jsonify({'resp': token.decode('utf-8')})
-
-
-# Auth method. Called if previous token has expired. Checks that user exist in DB and password matches and creates new token
-@app.route('/auth', methods=['GET'])
-def auth():
-    params = AuthSchemaForm(request.headers)
-    if not params.validate():
-        return abort(400)
-
-    cust_pass = session.query(Password).filter((Password.user_email == params.username.data)).first()
-    if not cust_pass:
-        return make_response('Not found such user!', 401, {'WWW.Authentication': 'Basic realm: "login required"'})
-    if not check_password(params.password.data, cust_pass.user_pass):
-        return make_response('User password does not match!', 401,
-                             {'WWW.Authentication': 'Basic realm: "login required"'})
-    return jsonify({'token': get_token(cust_pass.user_email, cust_pass.customer_id, temp_access=False).decode('utf-8')})
 
 
 # Get info about all customers
