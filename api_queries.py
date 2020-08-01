@@ -38,7 +38,7 @@ def sign_up():
             return jsonify({'resp': 'User alredy exists!'})
         else:
             customer_id = add_user(form.email.data, form.password.data)
-            token = get_token(form.email.data, customer_id, temp_access=False)
+            token = get_token(form.email.data, customer_id, form.password.data, temp_access=False)
             return jsonify({'resp': token.decode('utf-8')})
     return render_template('register.html', title='Register')
 
@@ -64,7 +64,8 @@ def auth():
             # return make_response('User password does not match!', 401,
             #                     {'WWW.Authentication': 'Basic realm: "login required"'})
         return jsonify(
-            {'token': get_token(cust_pass.user_email, cust_pass.customer_id, temp_access=False).decode('utf-8')})
+            {'token': get_token(cust_pass.user_email, cust_pass.customer_id, form.password.data,
+                                temp_access=False).decode('utf-8')})
     return render_template('login.html', error=error)
 
 
@@ -77,7 +78,7 @@ def forgot():
 
         cust: Password = session.query(Password).filter(Password.user_email == form.email.data).first()
         if cust:
-            token = get_token(cust.user_email, cust.customer_id, temp_access=True)
+            token = get_token(cust.user_email, cust.customer_id, cust.user_pass, temp_access=True)
             recover_url = url_for(
                 'reset_with_token',
                 token=token,
