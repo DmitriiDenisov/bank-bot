@@ -8,7 +8,7 @@ from crypto_utils.hash_password import check_password, get_hashed_password
 from models.Passwords import Password
 from utils.base import session
 
-TokenData = namedtuple('TokenData', ['user_email', 'customer_id', 'exp', 'iat', 'temp_access', 'salt'])
+TokenData = namedtuple('TokenData', ['user_email', 'customer_id', 'access_type', 'exp', 'iat', 'temp_access', 'salt'])
 
 
 def token_auth(pub_key):

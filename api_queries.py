@@ -53,7 +53,8 @@ def auth():
             # return abort(400)
             error = 'Username does not match email pattern'
             return render_template('login.html', error=error)
-        cust_pass = session.query(Password).filter((Password.user_email == form.username.data)).first()
+        cust_pass = session.query(Password).filter(Password.user_email == form.username.data).join(Customer,
+                                                                                                     isouter=True).first()
         if not cust_pass:
             error = 'Invalid Credentials. Please try again.'
             return render_template('login.html', error=error)
@@ -64,7 +65,7 @@ def auth():
             # return make_response('User password does not match!', 401,
             #                     {'WWW.Authentication': 'Basic realm: "login required"'})
         return jsonify(
-            {'token': get_token(cust_pass.user_email, cust_pass.customer_id, form.password.data,
+            {'token': get_token(cust_pass.user_email, cust_pass.customer_id, form.password.data, cust_pass.customer.access_type,
                                 temp_access=False).decode('utf-8')})
     return render_template('login.html', error=error)
 
@@ -162,10 +163,20 @@ def get_trans(data: TokenData):
 
 
 # Delete customer from DB
-@app.route('/delete_user', methods=['POST'])
+@app.route('/delete_user', methods=['GET', 'POST'])
 @token_auth(app.config['PRIVATE_KEY'])
-def del_cust(data: TokenData):
-    return jsonify({'success': False})
+def delete_user(data: TokenData):
+    if not request.args.get('customer_id', type=int):
+        return jsonify({'message': 'Not valid request!'})
+    if data.access_type != 1:
+        return jsonify({'resp': "You don't have rights for this!"})
+    customer_id = request.args.get('customer_id')
+    rowcount = session.query(Customer).filter(Customer.id == customer_id).delete()
+    session.commit()
+    if rowcount > 0:
+        return jsonify({'resp': 'User removed!'})
+    else:
+        return jsonify({'resp': 'Not found such user!'})
 
 
 if __name__ == '__main__':
