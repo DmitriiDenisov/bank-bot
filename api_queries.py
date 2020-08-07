@@ -54,7 +54,7 @@ def auth():
             error = 'Username does not match email pattern'
             return render_template('login.html', error=error)
         cust_pass = session.query(Password).filter(Password.user_email == form.username.data).join(Customer,
-                                                                                                     isouter=True).first()
+                                                                                                   isouter=True).first()
         if not cust_pass:
             error = 'Invalid Credentials. Please try again.'
             return render_template('login.html', error=error)
@@ -65,7 +65,8 @@ def auth():
             # return make_response('User password does not match!', 401,
             #                     {'WWW.Authentication': 'Basic realm: "login required"'})
         return jsonify(
-            {'token': get_token(cust_pass.user_email, cust_pass.customer_id, form.password.data, cust_pass.customer.access_type,
+            {'token': get_token(cust_pass.user_email, cust_pass.customer_id, form.password.data,
+                                cust_pass.customer.access_type,
                                 temp_access=False).decode('utf-8')})
     return render_template('login.html', error=error)
 
@@ -144,6 +145,24 @@ def get_all_custs(data: TokenData):
 
     return {"count": len(results), "custs": results}
 
+
+@app.route('/do_transaction', methods=['GET'])
+@token_auth(app.config['PRIVATE_KEY'])
+def do_transaction(data: TokenData):
+    # TODO: think how to do this with marshmallow without hard code
+    if not request.args.get('customer_id_to', type=int) or not \
+            request.args.get('amount', type=float) or not request.args.get('currency', type=str):
+        return jsonify({'message': 'Not valid request!'})
+    customer_id_to = request.args.get('customer_id_to', type=int)
+    currency = request.args.get('currency')
+
+    dict_amounts = {'usd_amt': 0, 'eur_amt': 0, 'aed_amt': 0}
+    dict_amounts[f'{currency}_amt'] = request.args.get('amount', type=int)
+    new_transaction = Transaction(data.customer_id, request.args.get('customer_id_to'), **dict_amounts)
+
+    session.add_all([new_transaction])
+    session.commit()
+    return jsonify({'message': 'Transaction made!'})
 
 # Get my all transactions
 @app.route('/get_trans', methods=['GET'])
