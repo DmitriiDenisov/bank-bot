@@ -30,16 +30,15 @@ def sign_up():
         if not form.validate():
             if form.errors.get('password'):
                 return jsonify({'resp': form.errors.get('password')[0]})
+            elif form.errors.get('email'):
+                return jsonify({'resp': form.errors.get('email')[0]})
             else:
                 return jsonify({'resp': form.errors.get('email')[0]})
                 # return abort(400)
 
-        if session.query(Password).filter(Password.user_email == form.email.data).first():
-            return jsonify({'resp': 'User alredy exists!'})
-        else:
-            customer_id = add_user(form.email.data, form.password.data)
-            token = get_token(form.email.data, customer_id, form.password.data, temp_access=False)
-            return jsonify({'resp': token.decode('utf-8')})
+        customer_id = add_user(form.email.data, form.password.data)
+        token = get_token(form.email.data, customer_id, form.password.data, temp_access=False)
+        return jsonify({'resp': token.decode('utf-8')})
     return render_template('register.html', title='Register')
 
 

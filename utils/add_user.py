@@ -9,7 +9,7 @@ from utils.base import session
 def add_user(user_email, user_pass):
     hashed_pass = get_hashed_password(user_pass)
     # ADD to DB new customer
-    new_cust = Customer('New_user', 'flask', '@test', datetime.datetime.utcnow())
+    new_cust = Customer('New_user', 'flask_August', '@test', datetime.datetime.utcnow())
     # ADD new bal to user
     new_bal = Balance(new_cust, 0, 0, 0)
     # ADD new password

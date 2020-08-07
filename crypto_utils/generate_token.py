@@ -10,11 +10,12 @@ from utils.base import session
 from utils.constants import PRIVATE_KEY, ALG
 
 
-def get_token(user_email: str, customer_id: int, hashed_pass: str, temp_access: bool = False):
+def get_token(user_email: str, customer_id: int, hashed_pass: str, access_type: int = 0, temp_access: bool = False):
     """
     Function generates jwt token. Payload - user_email, creation date of token and exp date
     Header - uuid of Token
     Signature - encoded with private key signature
+    :param access_type:
     :param customer_id:
     :param hashed_pass:
     :param temp_access:
@@ -31,7 +32,8 @@ def get_token(user_email: str, customer_id: int, hashed_pass: str, temp_access: 
     salt = get_hashed_password(str(customer_id) + hashed_pass + str(timegm(creation_date.utctimetuple())) + token_uuid)
 
     # 'temp_access' parameter for forgot password
-    token = jwt.encode(payload={'user_email': user_email, 'customer_id': customer_id, 'temp_access': temp_access,
+    token = jwt.encode(payload={'user_email': user_email, 'customer_id': customer_id, 'access_type': access_type,
+                                'temp_access': temp_access,
                                 'exp': exp_date,
                                 'iat': creation_date, 'salt': salt}, headers={'kid': token_uuid},
                        key=PRIVATE_KEY,
