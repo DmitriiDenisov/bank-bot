@@ -46,10 +46,12 @@ def token_auth(pub_key):
             # Transfer payload to namedtuple
             data = TokenData(**data)
 
-            # This is check only for temporary tokens for Forgot Password. Once password is changed => hash of salt will change
-            # We check that 'salt' parameter in payload matches with hash(customer_id + user_pass_hash + creation_date + token_uuid)
-            # Source: https://security.stackexchange.com/questions/153746/one-time-jwt-token-with-jwt-id-claim
-            # TODO: think about removing "if data.temp_access" because all tokens should be revoked once password is changed
+            # This is check only for temporary tokens for Forgot Password. Once password is changed => hash of salt
+            # will change We check that 'salt' parameter in payload matches with hash(customer_id + user_pass_hash +
+            # creation_date + token_uuid) Source:
+            # https://security.stackexchange.com/questions/153746/one-time-jwt-token-with-jwt-id-claim
+            # TODO: think
+            #  about removing "if data.temp_access" because all tokens should be revoked once password is changed
             if data.temp_access:
                 cust: Password = session.query(Password).filter(Password.customer_id == data.customer_id).first()
                 token_uuid = jwt.get_unverified_header(token)['kid']

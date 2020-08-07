@@ -21,12 +21,12 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 app.config['PRIVATE_KEY'] = PRIVATE_KEY
 
 
-# Sign_up method. It receives login-pass, checks that this user does not exist, if exists then add it to DB and create token for him
+# Sign_up method. It receives login-pass, checks that this user does not exist, if exists then add it to DB and
+# create token for him
 @app.route('/sign_up', methods=['GET', 'POST'])
 def sign_up():
     if request.method == 'POST':
         form = SignUpSchema(request.form)
-        # form.password
         if not form.validate():
             if form.errors.get('password'):
                 return jsonify({'resp': form.errors.get('password')[0]})
@@ -43,7 +43,8 @@ def sign_up():
     return render_template('register.html', title='Register')
 
 
-# Auth method. Called if previous token has expired. Checks that user exist in DB and password matches and creates new token
+# Auth method. Called if previous token has expired. Checks that user exist in DB and password matches and creates
+# new token
 @app.route('/auth', methods=['GET', 'POST'])
 def auth():
     error = None
@@ -69,6 +70,7 @@ def auth():
     return render_template('login.html', error=error)
 
 
+# Form for Forgot password. It generates one time link to method reset_with_token
 @app.route('/forgot', methods=['GET', 'POST'])
 def forgot():
     if request.method == 'POST':
@@ -76,6 +78,7 @@ def forgot():
         if not form.validate():
             return jsonify({'message': 'Not valid email!'})
 
+        # Check if customer exists in Password table
         cust: Password = session.query(Password).filter(Password.user_email == form.email.data).first()
         if cust:
             token = get_token(cust.user_email, cust.customer_id, cust.user_pass, temp_access=True)
@@ -90,6 +93,7 @@ def forgot():
         return render_template('forgot_pass.html')
 
 
+# After /forgot is called it redirects to this /reset_with_token to set new password
 @app.route('/reset_with_token', methods=['GET', 'POST'])
 @token_auth(app.config['PRIVATE_KEY'])
 def reset_with_token(data: TokenData):
@@ -98,7 +102,9 @@ def reset_with_token(data: TokenData):
         if not form.validate():
             return jsonify({'resp': form.errors.get('password1')[0]})
 
+        # get hash of new password
         hashed_pass = get_hashed_password(form.password1.data)
+        # Update user's hash pass in DB
         session.query(Password).filter(Password.customer_id == data.customer_id).update({"user_pass": hashed_pass})
         session.flush()
         session.commit()
