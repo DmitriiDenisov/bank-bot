@@ -1,5 +1,6 @@
 from flask import jsonify
-from wtforms import PasswordField, validators, Form, StringField, DateField
+from marshmallow import Schema, fields
+from wtforms import PasswordField, validators, Form, StringField, DateField, IntegerField, FloatField
 from wtforms.fields.html5 import EmailField
 import wtforms_json
 from wtforms.validators import EqualTo, InputRequired, ValidationError
@@ -44,3 +45,15 @@ class ForgotPass(Form):
 class ResetPass(Form):
     password1 = PasswordField('password1', [InputRequired(), EqualTo('password2', message='Passwords must match')])
     password2 = PasswordField('password2')
+
+
+class TransactionSchema(Form):
+    customer_id_to = IntegerField('customer_id_to', [validators.DataRequired()])
+    currency = StringField('currency', [validators.DataRequired()])
+    amount = FloatField('amount', [validators.DataRequired()])
+
+    def validate_customer_id_to(self, customer_id_to):
+        if not session.query(Customer).filter(Customer.id == customer_id_to.data).first():
+            raise ValidationError('User does not exist!')
+
+    # time_created = fields.DateTime(required=True)

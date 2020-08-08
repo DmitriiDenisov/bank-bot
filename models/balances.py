@@ -14,12 +14,12 @@ class Balance(Base):
     # Relationship means that python object will have separate field which is connected to value from another table
     # backref means that in Customer
     customer = relationship("Customer", backref=backref("bal", uselist=False))
-    usd_bal = Column(Float)
-    eur_bal = Column(Float)
-    aed_bal = Column(Float)
+    usd_amt = Column(Float)
+    eur_amt = Column(Float)
+    aed_amt = Column(Float)
 
-    def __init__(self, customer, usd_bal, eur_bal, aed_bal):
+    def __init__(self, customer, usd_amt, eur_amt, aed_amt):
         self.customer = customer
-        self.usd_bal = usd_bal
-        self.eur_bal = eur_bal
-        self.aed_bal = aed_bal
+        self.usd_amt = usd_amt
+        self.eur_amt = eur_amt
+        self.aed_amt = aed_amt

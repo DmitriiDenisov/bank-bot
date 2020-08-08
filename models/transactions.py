@@ -20,7 +20,7 @@ class Transaction(Base):
     eur_amt = Column(Float)
     aed_amt = Column(Float)
 
-    def __init__(self, customer_id_from, customer_id_to, usd_amt, eur_amt, aed_amt):
+    def __init__(self, customer_id_from, customer_id_to, usd_amt=0, eur_amt=0, aed_amt=0):
         self.customer_id_from = customer_id_from
         self.customer_id_to = customer_id_to
         self.usd_amt = usd_amt

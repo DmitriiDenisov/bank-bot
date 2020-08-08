@@ -1,9 +1,12 @@
+from typing import List
+
 from flask import Flask, request, abort, url_for
 from flask import jsonify, make_response
+from sqlalchemy import case
 
 from models.transactions import Transaction
 from utils.constants import PRIVATE_KEY
-from utils.schemas import TaskParamsSchema, AuthSchemaForm, SignUpSchema, ForgotPass, ResetPass
+from utils.schemas import AuthSchemaForm, SignUpSchema, ForgotPass, ResetPass, TransactionSchema
 from utils.add_user import add_user
 from utils.base import session
 from crypto_utils.generate_token import get_token
@@ -11,7 +14,6 @@ from crypto_utils.hash_password import check_password, get_hashed_password
 from models.Passwords import Password
 from models.balances import Balance
 from models.customer import Customer
-from datetime import date
 from flask import redirect, url_for, render_template
 from utils.token_auth import token_auth, TokenData
 
@@ -149,20 +151,52 @@ def get_all_custs(data: TokenData):
 @app.route('/do_transaction', methods=['GET'])
 @token_auth(app.config['PRIVATE_KEY'])
 def do_transaction(data: TokenData):
-    # TODO: think how to do this with marshmallow without hard code
-    if not request.args.get('customer_id_to', type=int) or not \
-            request.args.get('amount', type=float) or not request.args.get('currency', type=str):
-        return jsonify({'message': 'Not valid request!'})
-    customer_id_to = request.args.get('customer_id_to', type=int)
-    currency = request.args.get('currency')
+    params = TransactionSchema(request.args)
+    if not params.validate():
+        if params.errors.get('customer_id_to'):
+            return abort(400, params.errors.get('customer_id_to')[0])
+        abort(400, 'Not valid arguments!')
+    # params = TransactionSchema().load(request.args)
 
-    dict_amounts = {'usd_amt': 0, 'eur_amt': 0, 'aed_amt': 0}
-    dict_amounts[f'{currency}_amt'] = request.args.get('amount', type=int)
-    new_transaction = Transaction(data.customer_id, request.args.get('customer_id_to'), **dict_amounts)
+    # Get parameters from args
+    customer_id_to = params.customer_id_to.data
+    amount = params.amount.data
+    currency = f'{params.currency.data}_amt'
 
+    # Check if customer has enough balance
+    balance = session.query(Balance).filter(Balance.customer_id == data.customer_id).first()
+    if getattr(balance, currency) < amount:
+        return jsonify({'message': 'Not enough money on your balance!'})
+
+    # Update balances of customers, on average below code takes 0.46 sec
+    # Source: https://stackoverflow.com/questions/54365873/sqlalchemy-update-multiple-rows-in-one-transaction
+    session.query(Balance).filter(Balance.customer_id.in_([data.customer_id, customer_id_to])).update({
+        Balance.usd_amt: case(
+            {
+                data.customer_id: Balance.usd_amt - amount,
+                customer_id_to: Balance.usd_amt + amount
+            },
+            value=Balance.customer_id)
+    },
+        synchronize_session=False)
+    # Commented another method which first of all does Select and then inside Python changes values and then updates
+    # values. On average below code takes 0.76 sec
+    """
+    new_bal: List[Balance] = session.query(Balance).filter(
+        (Balance.customer_id == data.customer_id) | (Balance.customer_id == customer_id_to)).all()
+    for bal in new_bal:
+        if bal.customer_id == data.customer_id:
+            setattr(bal, currency, getattr(bal, currency) - amount)
+        else:
+            setattr(bal, currency, getattr(bal, currency) + amount)
+    """
+
+    # Create transaction and add it to Transactions table
+    new_transaction = Transaction(data.customer_id, customer_id_to, **{currency: amount})
     session.add_all([new_transaction])
     session.commit()
     return jsonify({'message': 'Transaction made!'})
+
 
 # Get my all transactions
 @app.route('/get_trans', methods=['GET'])

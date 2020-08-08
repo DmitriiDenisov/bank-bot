@@ -23,7 +23,7 @@ def get_token(user_email: str, customer_id: int, hashed_pass: str, access_type: 
     :return: token
     """
     creation_date = datetime.datetime.utcnow()
-    exp_date = datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
+    exp_date = datetime.datetime.utcnow() + datetime.timedelta(days=3)
     token_uuid = uuid.uuid4().hex
 
     # 'salt' is parameter in payload equals to hash(customer_id + user_pass_hash + creation_date + token_uuid)
