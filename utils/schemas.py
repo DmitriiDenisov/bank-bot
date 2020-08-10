@@ -61,7 +61,7 @@ class TransactionSchema(Form):
 
 class CurrencyChangeSchema(Form):
     # filters - function that is applied before validators are checked
-    # here upper() is added to make validators case non sensitive 
+    # here upper() is added to make validators case non sensitive
     curr_from = StringField('curr_from', filters=[lambda x: x.upper()],
                             validators=[validators.DataRequired(), validators.AnyOf(['USD', 'EUR', 'AED'])])
     curr_to = StringField('curr_to', filters=[lambda x: x.upper()],
