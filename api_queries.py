@@ -1,12 +1,13 @@
 from typing import List
 
+import requests
 from flask import Flask, request, abort, url_for
 from flask import jsonify, make_response
 from sqlalchemy import case
 
 from models.transactions import Transaction
 from utils.constants import PRIVATE_KEY
-from utils.schemas import AuthSchemaForm, SignUpSchema, ForgotPass, ResetPass, TransactionSchema
+from utils.schemas import AuthSchemaForm, SignUpSchema, ForgotPass, ResetPass, TransactionSchema, CurrencyChangeSchema
 from utils.add_user import add_user
 from utils.base import session
 from crypto_utils.generate_token import get_token
@@ -196,6 +197,36 @@ def do_transaction(data: TokenData):
     session.add_all([new_transaction])
     session.commit()
     return jsonify({'message': 'Transaction made!'})
+
+
+@app.route('/own_transfer', methods=['GET'])
+@token_auth(app.config['PRIVATE_KEY'])
+def own_transfer(data: TokenData):
+    # Get params
+    params = CurrencyChangeSchema(request.args)
+    if not params.validate():
+        return abort(400, 'Wrong parameters!')
+
+    # Get rate for given pair of currencies
+    response = requests.get('http://localhost:5000/get_rates',
+                            params={'from': params.curr_from.data.upper(), 'to': params.curr_to.data.upper()})
+    if response.status_code == 404:
+        return False
+    rate = response.json()['rate']
+    add = round(params.amount.data * rate, 2)
+    from_str = f"{params.curr_from.data.lower()}_amt"
+    to_str = f"{params.curr_to.data.lower()}_amt"
+
+    # Check if user has enough money on his balance
+    cust: Balance = session.query(Balance).filter(Balance.customer_id == data.customer_id).first()
+    if getattr(cust, from_str) < params.amount.data:
+        return jsonify({'resp': 'Not enough money!'})
+
+    # Update user's balance
+    session.query(Balance).filter(Balance.customer_id == data.customer_id).update(
+        {from_str: (getattr(Balance, from_str) - params.amount.data), to_str: (getattr(Balance, to_str) + add)})
+    session.commit()
+    return jsonify({'resp': 'success'})
 
 
 # Get my all transactions

@@ -57,3 +57,13 @@ class TransactionSchema(Form):
             raise ValidationError('User does not exist!')
 
     # time_created = fields.DateTime(required=True)
+
+
+class CurrencyChangeSchema(Form):
+    # filters - function that is applied before validators are checked
+    # here upper() is added to make validators case non sensitive 
+    curr_from = StringField('curr_from', filters=[lambda x: x.upper()],
+                            validators=[validators.DataRequired(), validators.AnyOf(['USD', 'EUR', 'AED'])])
+    curr_to = StringField('curr_to', filters=[lambda x: x.upper()],
+                          validators=[validators.DataRequired(), validators.AnyOf(['USD', 'EUR', 'AED'])])
+    amount = FloatField('amount', [validators.DataRequired()])
