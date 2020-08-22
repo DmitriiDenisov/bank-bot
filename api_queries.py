@@ -209,7 +209,7 @@ def own_transfer(data: TokenData):
 
     # Get rate for given pair of currencies
     response = requests.get('http://localhost:5000/get_rates',
-                            params={'from': params.curr_from.data.upper(), 'to': params.curr_to.data.upper()})
+                            params={'curr_from': params.curr_from.data.upper(), 'curr_to': params.curr_to.data.upper()})
     if response.status_code == 404:
         return False
     rate = response.json()['rate']
