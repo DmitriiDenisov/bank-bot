@@ -6,6 +6,7 @@ from flask import jsonify, make_response
 from sqlalchemy import case
 
 from models.transactions import Transaction
+from rabbitmq_utils.rmq_utils import publish_message
 from utils.constants import PRIVATE_KEY
 from utils.schemas import AuthSchemaForm, SignUpSchema, ForgotPass, ResetPass, TransactionSchema, CurrencyChangeSchema
 from utils.add_user import add_user
@@ -160,7 +161,6 @@ def do_transaction(data: TokenData):
     # params = TransactionSchema().load(request.args)
 
     # Get parameters from args
-    customer_id_to = params.customer_id_to.data
     amount = params.amount.data
     currency = f'{params.currency.data}_amt'
 
@@ -169,33 +169,12 @@ def do_transaction(data: TokenData):
     if getattr(balance, currency) < amount:
         return jsonify({'message': 'Not enough money on your balance!'})
 
-    # Update balances of customers, on average below code takes 0.46 sec
-    # Source: https://stackoverflow.com/questions/54365873/sqlalchemy-update-multiple-rows-in-one-transaction
-    session.query(Balance).filter(Balance.customer_id.in_([data.customer_id, customer_id_to])).update({
-        Balance.usd_amt: case(
-            {
-                data.customer_id: Balance.usd_amt - amount,
-                customer_id_to: Balance.usd_amt + amount
-            },
-            value=Balance.customer_id)
-    },
-        synchronize_session=False)
-    # Commented another method which first of all does Select and then inside Python changes values and then updates
-    # values. On average below code takes 0.76 sec
-    """
-    new_bal: List[Balance] = session.query(Balance).filter(
-        (Balance.customer_id == data.customer_id) | (Balance.customer_id == customer_id_to)).all()
-    for bal in new_bal:
-        if bal.customer_id == data.customer_id:
-            setattr(bal, currency, getattr(bal, currency) - amount)
-        else:
-            setattr(bal, currency, getattr(bal, currency) + amount)
-    """
+    # Publish message to RabbitMQ:
+    publish_message({'customer_id': data.customer_id,
+                     'customer_id_to': params.customer_id_to.data,
+                     'amount': amount,
+                     'currency': currency}, queue='transactions')
 
-    # Create transaction and add it to Transactions table
-    new_transaction = Transaction(data.customer_id, customer_id_to, **{currency: amount})
-    session.add_all([new_transaction])
-    session.commit()
     return jsonify({'message': 'Transaction made!'})
 
 
@@ -208,7 +187,7 @@ def own_transfer(data: TokenData):
         return abort(400, 'Wrong parameters!')
 
     # Get rate for given pair of currencies
-    response = requests.get('http://localhost:5000/get_rates',
+    response = requests.get('http://localhost:5002/get_rates',
                             params={'curr_from': params.curr_from.data.upper(), 'curr_to': params.curr_to.data.upper()})
     if response.status_code == 404:
         return False
@@ -222,10 +201,12 @@ def own_transfer(data: TokenData):
     if getattr(cust, from_str) < params.amount.data:
         return jsonify({'resp': 'Not enough money!'})
 
-    # Update user's balance
-    session.query(Balance).filter(Balance.customer_id == data.customer_id).update(
-        {from_str: (getattr(Balance, from_str) - params.amount.data), to_str: (getattr(Balance, to_str) + add)})
-    session.commit()
+    publish_message(json_body={'customer_id': data.customer_id,
+                               'from_str': from_str,
+                               'amount_subtract': params.amount.data,
+                               'to_str': to_str,
+                               'amount_add': add}, queue='own_transaction')
+
     return jsonify({'resp': 'success'})
 
 
