@@ -1,1 +1,6 @@
-FROM python:3-alpine
+FROM worker_base
+
+COPY . /app
+WORKDIR /app
+
+ENTRYPOINT ["python3", "-u", "rabbitmq_utils/worker_own_transfer.py"]
