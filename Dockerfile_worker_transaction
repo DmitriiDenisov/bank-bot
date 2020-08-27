@@ -1,6 +1,5 @@
-FROM worker_base
 
-COPY . /app
-WORKDIR /app
+
+docker run --net="host" --entrypoint ""  worker_base
 
 ENTRYPOINT ["python3", "-u", "rabbitmq_utils/worker_transactions.py"]

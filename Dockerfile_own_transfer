@@ -1,3 +1,4 @@
+# docker build -t test_im_2 -f Dockerfile_own_transfer .
 FROM worker_base
 
 COPY . /app
