@@ -1,3 +1,8 @@
+import os, sys
+
+PROJECT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(PROJECT_PATH)
+
 import json
 from collections import namedtuple
 
