@@ -9,10 +9,12 @@ https://www.youtube.com/watch?v=Y5G7hg9CGIc
 
 ## Run workers (to own_transaction and transactions queues in RabbitMQ):
 To run Worker connected to own_transaction queue:
-`bash run_worker_own_transfer.sh`
+1. `docker login`
+2. `bash run_worker_own_transfer.sh`
 
 To run Worker connected to transactions queue:
-`bash run_worker_transaction.sh`
+1. `docker login`
+2. `bash run_worker_transaction.sh`
 
 If you have problem with pulling docker image then you can build it locally: 
 
