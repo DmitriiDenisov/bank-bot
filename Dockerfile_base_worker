@@ -10,4 +10,4 @@ RUN \
  python3 -m pip install -r requirements_worker.txt --no-cache-dir && \
  apk --purge del .build-deps
 
-CMD ["python3"]
+ENTRYPOINT ["python3", "-u", "rabbitmq_utils/worker_own_transfer.py"]

@@ -1,1 +1,1 @@
-docker run --entrypoint python3 -d --net="host" worker_base -u rabbitmq_utils/worker_own_transfer.py
+docker run --entrypoint python3 -d --net="host" --name $1 worker_base -u rabbitmq_utils/worker_own_transfer.py
