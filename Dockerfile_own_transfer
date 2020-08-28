@@ -1,7 +1,0 @@
-# docker build -t test_im_2 -f Dockerfile_own_transfer .
-FROM worker_base
-
-COPY . /app
-WORKDIR /app
-
-ENTRYPOINT ["python3", "-u", "rabbitmq_utils/worker_own_transfer.py"]

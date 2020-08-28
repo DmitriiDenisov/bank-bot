@@ -1,5 +1,0 @@
-
-
-docker run --net="host" --entrypoint "python3 rabbitmq_utils/worker_transactions.py"  worker_base
-
-ENTRYPOINT ["python3", "-u", "rabbitmq_utils/worker_transactions.py"]
