@@ -1,1 +1,1 @@
-docker run --entrypoint python3 --net="host" worker_base -u rabbitmq_utils/worker_transactions.py
+docker run --entrypoint python3 -d --net="host" worker_base -u rabbitmq_utils/worker_transactions.py
