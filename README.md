@@ -4,6 +4,19 @@
 ЭЦП:
 https://www.youtube.com/watch?v=Y5G7hg9CGIc
 
+## Structure of whole project:
+
+```
+.
+├── .env                  
+├── docker-compose.yml                    
+├── bank-bot                     # this repo
+├── bank-bot-db                  # [data base repo](https://github.com/DmitriiDenisov/bank-bot-db)
+├── cpp-service-bank-bot         # [cpp-service repo](https://github.com/DmitriiDenisov/cpp-service-bank-bot)         
+├── currency-service-bank-bot.   # [currency-service repo](https://github.com/DmitriiDenisov/currency-service-bank-bot)
+└── node-apidemo                 # [node-apidemo repo](https://github.com/DmitriiDenisov/node-apidemo) 
+```
+
 ## Run Flask and main api:
 Add to credentials folder files:
 1. `credentials_db` - URL for Postgres, for example `postgresql://user:password@35.213.279.96:5432/bank_bot_db`
