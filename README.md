@@ -17,6 +17,12 @@ https://www.youtube.com/watch?v=Y5G7hg9CGIc
 └── node-apidemo                 # [node-apidemo repo](https://github.com/DmitriiDenisov/node-apidemo) 
 ```
 
+Run all services: `docker-compose up -d`
+
+(optional) if you want multiple docker containers: 
+`docker-compose up -d --scale worker-transaction=3 --scale worker-own-transfer=2`
+
+
 ## Run Flask and main api:
 Add to credentials folder files:
 1. `credentials_db` - URL for Postgres, for example `postgresql://user:password@35.213.279.96:5432/bank_bot_db`
