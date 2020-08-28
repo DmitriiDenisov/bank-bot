@@ -4,8 +4,22 @@
 ЭЦП:
 https://www.youtube.com/watch?v=Y5G7hg9CGIc
 
+## Run Flask and main api:
+`python3 api_queries.py`
 
-## Review of Repo:
+## Run workers (to own_transaction and transactions queues in RabbitMQ):
+To run Worker connected to own_transaction queue:
+`bash run_worker_own_transfer.sh`
+
+To run Worker connected to transactions queue:
+`bash run_worker_transaction.sh`
+
+If you have problem with pulling docker image then you can build it locally: 
+
+`docker build -t worker_base -f Dockerfile_base_worker .`
+
+
+## Detailed review of Repo:
 
 ### credentials: folder which should consist of private_key, public_key, credentials_db which are not presented in repo
 credentials_db should have only one row of text which is url to the DB, for example postgresql://username:mypass@34.71.210.249:5432/bank_bot_db
