@@ -1,7 +1,7 @@
 # docker build -t worker_base -f Dockerfile_base_worker .
 FROM python:3-alpine
 
-COPY . /app
+COPY ./requirements_worker.txt /app/requirements_worker.txt
 WORKDIR /app
 
 RUN \
@@ -9,5 +9,7 @@ RUN \
  apk add --no-cache --virtual .build-deps gcc python3-dev musl-dev postgresql-dev && \
  python3 -m pip install -r requirements_worker.txt --no-cache-dir && \
  apk --purge del .build-deps
+
+ COPY . /app
 
 ENTRYPOINT ["python3", "-u", "rabbitmq_utils/worker_own_transfer.py"]
