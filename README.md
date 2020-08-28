@@ -22,6 +22,11 @@ Run all services: `docker-compose up -d`
 (optional) if you want multiple docker containers: 
 `docker-compose up -d --scale worker-transaction=3 --scale worker-own-transfer=2`
 
+`.env` file should look like this:
+```
+TOKEN=abcd
+PORT=5004
+```
 
 ## Run Flask and main api:
 Add to credentials folder files:
