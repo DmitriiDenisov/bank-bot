@@ -5,9 +5,17 @@
 https://www.youtube.com/watch?v=Y5G7hg9CGIc
 
 ## Run Flask and main api:
-`python3 api_queries.py`
+Add to credentials folder files:
+1. `credentials_db` - URL for Postgres, for example `postgresql://user:password@35.213.279.96:5432/bank_bot_db`
+2. `private_key_HS256` - see `constants.py`, it will be used in `token_auth` method for decoding of JWT key
+3. `private_key_RS256` - see `constants.py`, it will be used in `token_auth` method for decoding of JWT key
+4. `public_key_RS256` - see `constants.py`, it will be used in `token_auth` method for decoding of JWT key
+5. `python3 api_queries.py`
 
 ## Run workers (to own_transaction and transactions queues in RabbitMQ):
+Add to credentials folder files:
+`credentials_db` - URL for Postgres, for example `postgresql://user:password@35.213.279.96:5432/bank_bot_db`
+
 To run Worker connected to own_transaction queue:
 `bash run_worker_own_transfer.sh`
 
