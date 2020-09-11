@@ -1,9 +1,6 @@
 # bank-bot
 
 
-ЭЦП:
-https://www.youtube.com/watch?v=Y5G7hg9CGIc
-
 ## Structure of whole project:
 
 ```
@@ -24,8 +21,8 @@ Run all services: `docker-compose up -d`
 
 `.env` file should look like this:
 ```
-TOKEN=abcd
-PORT=5004
+TOKEN=abcd # Token for currency-service from https://fixer.io/
+PORT=5004 # Port for currency-service
 ```
 
 ## Run Flask and main api:
@@ -84,4 +81,7 @@ Also Libraries like bcrypt are smart enough to store the salt IN the resulting s
 https://hackernoon.com/hashing-passwords-in-python-bcrypt-tutorial-with-examples-77dh36ef
 
  file `api_queries.py` - main file which uses everything else. In order to run: `python api_queries.py`
+
+About ЭЦП:
+https://www.youtube.com/watch?v=Y5G7hg9CGIc
 
