@@ -6,7 +6,7 @@
 ```
 .
 ├── .env                  
-├── docker-compose.yml           # Download it from [Pastebin](https://pastebin.com/SDi4kgmB)                 
+├── docker-compose.yml           # Download it from [Pastebin](https://pastebin.com/D5uggnYc)                 
 ├── bank-bot                     # this repo
 ├── bank-bot-db                  # [data base repo](https://github.com/DmitriiDenisov/bank-bot-db)
 ├── cpp-service-bank-bot         # [cpp-service repo](https://github.com/DmitriiDenisov/cpp-service-bank-bot)         
@@ -14,7 +14,8 @@
 └── node-apidemo                 # [node-apidemo repo](https://github.com/DmitriiDenisov/node-apidemo) 
 ```
 
-1. Download docker-compose.yml file from [Pastebin](https://pastebin.com/SDi4kgmB)  
+1. Download docker-compose.yml file from [Pastebin](https://pastebin.com/D5uggnYc) 
+
 2. Create `.env` file. It should look like this:
 ```
 TOKEN=abcd # Token for currency-service from https://fixer.io/
