@@ -1,12 +1,12 @@
 # bank-bot
 
 
-## Structure of whole project:
+## How to Run whole project. Structure of whole project:
 
 ```
 .
 ├── .env                  
-├── docker-compose.yml                    
+├── docker-compose.yml           # Download it from [Pastebin](https://pastebin.com/SDi4kgmB)                 
 ├── bank-bot                     # this repo
 ├── bank-bot-db                  # [data base repo](https://github.com/DmitriiDenisov/bank-bot-db)
 ├── cpp-service-bank-bot         # [cpp-service repo](https://github.com/DmitriiDenisov/cpp-service-bank-bot)         
@@ -14,18 +14,19 @@
 └── node-apidemo                 # [node-apidemo repo](https://github.com/DmitriiDenisov/node-apidemo) 
 ```
 
-Run all services: `docker-compose up -d`
-
-(optional) if you want multiple docker containers: 
-`docker-compose up -d --scale worker-transaction=3 --scale worker-own-transfer=2`
-
-`.env` file should look like this:
+1. Download docker-compose.yml file from [Pastebin](https://pastebin.com/SDi4kgmB)  
+2. Create `.env` file. It should look like this:
 ```
 TOKEN=abcd # Token for currency-service from https://fixer.io/
 PORT=5004 # Port for currency-service
 ```
+3. Run all services: `docker-compose up -d`
+4. (optional) if you want multiple docker containers: 
+`docker-compose up -d --scale worker-transaction=3 --scale worker-own-transfer=2`
 
-## Run Flask and main api:
+
+
+## How to Run only this repo (Flask and main api):
 Add to credentials folder files:
 1. `credentials_db` - URL for Postgres, for example `postgresql://user:password@35.213.279.96:5432/bank_bot_db`
 2. `private_key_HS256` - see `constants.py`, it will be used in `token_auth` method for decoding of JWT key
