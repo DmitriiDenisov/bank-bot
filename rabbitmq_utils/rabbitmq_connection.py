@@ -1,11 +1,22 @@
 import pika
+from environs import Env
+
+env = Env()
+env.read_env('.env')  # read .env file, if it exists
+
+# required variables
+HOST = env("HOST_RABBIT")
+USER = env("USER_RABBIT")
+PASSWORD = env("PASSWORD_RABBIT")
+# providing a default value
+enable_login = env.bool("ENABLE_LOGIN", False)  # => True
 
 
 def get_rabbit_connection():
-    credentials = pika.PlainCredentials('publisher', 'qwerty')  # login + pass
+    credentials = pika.PlainCredentials(USER, PASSWORD)  # login + pass
 
     connection = pika.BlockingConnection(pika.ConnectionParameters(
-        host='35.223.179.96',  # host, in Google Cloud Internal IP
+        host=HOST,  # host, in Google Cloud Internal IP
         port=5672,  # port, usually 5672 or 15672
         credentials=credentials  # login + pass))
     ))
