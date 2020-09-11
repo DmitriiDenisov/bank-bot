@@ -19,6 +19,11 @@
 ```
 TOKEN=abcd # Token for currency-service from https://fixer.io/
 PORT=5004 # Port for currency-service
+HOST_RABBIT=localhost # Host for RabbitMq (if same server => localhost)
+USER_RABBIT=publisher # user name for RabbitMQ
+PASSWORD_RABBIT=1234 # password for RabbitMQ
+URL_DB=postgresql://username:mypassword@localhost:5432/bank_bot_db # URL for DB
+KEY_HS256=1353977sfsde10f731f625004e4588ca238 # Secret KEY which is used in `token_auth` method for decoding of JWT key
 ```
 3. Run all services: `docker-compose up -d`
 4. (optional) if you want multiple docker containers: 
