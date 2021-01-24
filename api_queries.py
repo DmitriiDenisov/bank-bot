@@ -7,7 +7,7 @@ from sqlalchemy import case
 
 from models.transactions import Transaction
 from rabbitmq_utils.rmq_utils import publish_message
-from utils.constants import PRIVATE_KEY
+from utils.constants import PRIVATE_KEY, HOST_CURR_SERV, PORT_CURR_SERV
 from utils.schemas import AuthSchemaForm, SignUpSchema, ForgotPass, ResetPass, TransactionSchema, CurrencyChangeSchema
 from utils.add_user import add_user
 from utils.base import session
@@ -187,7 +187,7 @@ def own_transfer(data: TokenData):
         return abort(400, 'Wrong parameters!')
 
     # Get rate for given pair of currencies
-    response = requests.get('http://localhost:5002/get_rates',
+    response = requests.get(f'http://{HOST_CURR_SERV}:{PORT_CURR_SERV}/get_rates',
                             params={'curr_from': params.curr_from.data.upper(), 'curr_to': params.curr_to.data.upper()})
     if response.status_code == 404:
         return False

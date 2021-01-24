@@ -2,11 +2,13 @@ import json
 
 import pika
 
-credentials = pika.PlainCredentials('publisher', 'qwerty')  # login + pass
+from utils.constants import USER_RABBIT, PASSWORD_RABBIT, HOST_RABBIT, PORT_RABBIT
+
+credentials = pika.PlainCredentials(USER_RABBIT, PASSWORD_RABBIT)  # login + pass
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(
-    host='35.223.179.96',  # host, in Google Cloud Internal IP
-    port=5672,  # port, usually 5672 or 15672
+    host=HOST_RABBIT,  # host, in Google Cloud Internal IP
+    port=PORT_RABBIT,  # port, usually 5672 or 15672
     credentials=credentials  # login + pass))
 ))
 channel = connection.channel()

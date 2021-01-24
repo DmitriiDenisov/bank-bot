@@ -5,6 +5,12 @@ env = Env()
 env.read_env('.env')  # read .env file, if it exists
 # required variables
 URL_DB = env("URL_DB")
+HOST_RABBIT = env("HOST_RABBIT")
+PORT_RABBIT = env.int("PORT_RABBIT")
+USER_RABBIT = env("USER_RABBIT")
+PASSWORD_RABBIT = env("PASSWORD_RABBIT")
+HOST_CURR_SERV = env("HOST_CURR_SERV")
+PORT_CURR_SERV = env.int("PORT_CURR_SERV")
 
 PROJECT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
