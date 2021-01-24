@@ -10,7 +10,7 @@
 ├── bank-bot                     # this repo
 ├── bank-bot-db                  # [data base repo](https://github.com/DmitriiDenisov/bank-bot-db)
 ├── cpp-service-bank-bot         # [cpp-service repo](https://github.com/DmitriiDenisov/cpp-service-bank-bot)         
-├── currency-service-bank-bot.   # [currency-service repo](https://github.com/DmitriiDenisov/currency-service-bank-bot)
+├── currency-service-bank-bot   # [currency-service repo](https://github.com/DmitriiDenisov/currency-service-bank-bot)
 └── node-apidemo                 # [node-apidemo repo](https://github.com/DmitriiDenisov/node-apidemo) 
 ```
 
