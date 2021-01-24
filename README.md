@@ -32,7 +32,7 @@ KEY_HS256=1353977sfsde10f731f625004e4588ca238 # Secret KEY which is used in `tok
 ## Services that are up on server:
 
 1. AirFlow: port 8080 (**does not** automatically restarts once server is restarted)
-2. RabbitMQ: port 15672 (automatically restarts once server is restarted)
+2. RabbitMQ: port 15672 (automatically restarts once server is restarted). If you don't see queues check that you have access to virtual host. In order to do that in UI go to 'Admin' and check if you have access to virtual hosts
 3. Jenkins: port 9090 (automatically restarts once server is restarted)
 
 ## How to Run only this repo (Flask and main api):
