@@ -8,9 +8,10 @@ URL_DB = env("URL_DB")
 
 PROJECT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-PUBLIC_EXPONENT = 65537
-KEY_SIZE = 2048
-ALG = 'HS256'
+PUBLIC_EXPONENT = 65537  # only for generation private_key_RS256/public_key_RS256
+KEY_SIZE = 2048  # only for generation private_key_RS256/public_key_RS256
+ALG = 'HS256'  # definition of which algo we are using for encrypt.
+# Either HS256 (uses one private key) or RS256 (uses pair of private/public keys).
 
 if ALG == 'HS256':
     # with open(os.path.join(PROJECT_PATH, 'credentials', 'private_key_HS256')) as f:
