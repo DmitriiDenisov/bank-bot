@@ -43,11 +43,7 @@ Add to credentials folder files:
 
 ## Run workers (to own_transaction and transactions queues in RabbitMQ):
 
-To run Worker connected to own_transaction queue:
-`bash run_worker_own_transfer.sh`
-
-To run Worker connected to transactions queue:
-`bash run_worker_transaction.sh`
+They will automatically run after command `docker-compose up -d`
 
 If you have problem with pulling docker image then you can build it locally: 
 
