@@ -84,7 +84,7 @@ https://hackernoon.com/hashing-passwords-in-python-bcrypt-tutorial-with-examples
 
  file `api_queries.py` - main file which uses everything else. In order to run: `python api_queries.py`
 
-[More about electronic digital signature[RUS]] https://www.youtube.com/watch?v=Y5G7hg9CGIc
+More about electronic digital signature [RUS](https://www.youtube.com/watch?v=Y5G7hg9CGIc)
 
 ### Trello 
 https://trello.com/b/kuk4mthV/bank-bot
