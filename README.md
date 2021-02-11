@@ -22,6 +22,8 @@ It should look like this:
 HOST_RABBIT=localhost # Host for RabbitMq (if same server => localhost)
 USER_RABBIT=publisher # user name for RabbitMQ
 PASSWORD_RABBIT=1234 # password for RabbitMQ
+HOST_CURR_SERV=localhost
+PORT_CURR_SERV=5004
 URL_DB=postgresql://username:mypassword@localhost:5432/bank_bot_db # URL for DB
 KEY_HS256=1353977sfsde10f731f625004e4588ca238 # Secret KEY which is used in `token_auth` method for decoding of JWT key
 ```
