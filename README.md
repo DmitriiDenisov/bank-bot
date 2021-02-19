@@ -38,6 +38,7 @@ KEY_HS256=1353977sfsde10f731f625004e4588ca238 # Secret KEY which is used in `tok
 3. Jenkins: port 9090 (automatically restarts once server is restarted)
 4. GitLab: port 9111 (automatically restarts once server is restarted, It may take some time or require additional computation power as developer recommends at least 4GB of RAM)
 
+
 ## How to Run only this repo (Flask and main api):
 Add to credentials folder files:
 1. Create file .env (see above)
