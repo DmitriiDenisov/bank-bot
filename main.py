@@ -121,7 +121,7 @@ def reset_with_token(data: TokenData):
 # Just ping
 @app.route('/ping', methods=['GET'])
 def ping():
-    return jsonify({'resp': 'Success'})
+    return jsonify({'resp': 'True!'})
 
 
 # Get info about me
