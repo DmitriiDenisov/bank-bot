@@ -118,6 +118,12 @@ def reset_with_token(data: TokenData):
     return render_template('reset_pass.html')
 
 
+# Just ping
+@app.route('/ping', methods=['GET'])
+def ping():
+    return jsonify({'resp': 'Success'})
+
+
 # Get info about me
 # token_auth decorator checks that token is valid
 @app.route('/me', methods=['GET'])
