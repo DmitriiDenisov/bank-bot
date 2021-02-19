@@ -9,9 +9,12 @@ credentials = pika.PlainCredentials(USER_RABBIT, PASSWORD_RABBIT)  # login + pas
 connection = pika.BlockingConnection(pika.ConnectionParameters(
     host=HOST_RABBIT,  # host, in Google Cloud Internal IP
     port=PORT_RABBIT,  # port, usually 5672 or 15672
-    credentials=credentials  # login + pass))
+    credentials=credentials,  # login + pass))
+    heartbeat=0 # The heartbeat timeout value defines after what period of time the peer TCP connection
+    # should be considered unreachable (down) by RabbitMQ and client libraries.
 ))
 channel = connection.channel()
+
 
 
 def publish_message(json_body, queue):
