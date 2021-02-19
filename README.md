@@ -49,7 +49,7 @@ KEY_HS256=bcae2a8c35a0de3353977ed7af0de10731f62500e4588ca238 # Secret KEY which 
 Add to credentials folder files:
 1. Create file .env (see above)
 2. In `constants.py` by default HS256 algorithm is used, if you want to use RS256 then you need to run `python3 crypto_utils/generate_keys_RS256.py`
-3. `python3 api_queries.py`
+3. `python3 main.py`
 
 ## Run workers (to own_transaction and transactions queues in RabbitMQ):
 
