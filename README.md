@@ -19,13 +19,19 @@
 2. Create `.env` file. You can download it from releases in this repo, it has only hidden file .env inside
 It should look like this:
 ```
+# Config for curr-serv
+TOKEN=33c35846ca3537 # Token for https://fixer.io/
+PORT=5004 # Port for curr-serv
+
+# Config for front + rabbitmq workers (worker_own_transfer and worker_transactions)
 HOST_RABBIT=localhost # Host for RabbitMq (if same server => localhost)
+PORT_RABBIT=5672 # Port for Rabbit
 USER_RABBIT=publisher # user name for RabbitMQ
-PASSWORD_RABBIT=1234 # password for RabbitMQ
-HOST_CURR_SERV=localhost
-PORT_CURR_SERV=5004
-URL_DB=postgresql://username:mypassword@localhost:5432/bank_bot_db # URL for DB
-KEY_HS256=1353977sfsde10f731f625004e4588ca238 # Secret KEY which is used in `token_auth` method for decoding of JWT key
+PASSWORD_RABBIT=qwerty # password for RabbitMQ
+HOST_CURR_SERV=localhost # host of curr-serv
+PORT_CURR_SERV=5004 # port of curr-serv
+URL_DB=postgresql://dmitryhse:mypassword@localhost:5432/bank_bot_db # DB URL and credentials
+KEY_HS256=bcae2a8c35a0de3353977ed7af0de10731f62500e4588ca238 # Secret KEY which is used in `token_auth` method for decoding of JWT key
 ```
 3. Run all services: `docker-compose up -d`
 4. (optional) if you want multiple docker containers: 
