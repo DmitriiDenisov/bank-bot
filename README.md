@@ -22,6 +22,8 @@ It should look like this:
 HOST_RABBIT=localhost # Host for RabbitMq (if same server => localhost)
 USER_RABBIT=publisher # user name for RabbitMQ
 PASSWORD_RABBIT=1234 # password for RabbitMQ
+HOST_CURR_SERV=localhost
+PORT_CURR_SERV=5004
 URL_DB=postgresql://username:mypassword@localhost:5432/bank_bot_db # URL for DB
 KEY_HS256=1353977sfsde10f731f625004e4588ca238 # Secret KEY which is used in `token_auth` method for decoding of JWT key
 ```
@@ -34,6 +36,8 @@ KEY_HS256=1353977sfsde10f731f625004e4588ca238 # Secret KEY which is used in `tok
 1. AirFlow: port 8080 (**does not** automatically restarts once server is restarted)
 2. RabbitMQ: port 15672 (automatically restarts once server is restarted). If you don't see queues check that you have access to virtual host. In order to do that in UI go to 'Admin' and check if you have access to virtual hosts
 3. Jenkins: port 9090 (automatically restarts once server is restarted)
+4. GitLab: port 9111 (automatically restarts once server is restarted, It may take some time or require additional computation power as developer recommends at least 4GB of RAM)
+
 
 ## How to Run only this repo (Flask and main api):
 Add to credentials folder files:
@@ -84,6 +88,7 @@ https://hackernoon.com/hashing-passwords-in-python-bcrypt-tutorial-with-examples
 
  file `api_queries.py` - main file which uses everything else. In order to run: `python api_queries.py`
 
-About ЭЦП:
-https://www.youtube.com/watch?v=Y5G7hg9CGIc
+More about electronic digital signature [RUS](https://www.youtube.com/watch?v=Y5G7hg9CGIc)
 
+### Trello 
+https://trello.com/b/kuk4mthV/bank-bot
