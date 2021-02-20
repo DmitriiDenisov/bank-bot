@@ -21,9 +21,9 @@ from utils.token_auth import token_auth, TokenData
 
 # Define Flask app
 app = Flask(__name__, template_folder='templates', static_folder='static')
-from flask_assets import Environment, Bundle
-from flask_scss import Scss
-Scss(app, static_dir='static', asset_dir='s_asset')
+# from flask_assets import Environment, Bundle
+# from flask_scss import Scss
+# Scss(app, static_dir='static', asset_dir='s_asset')
 
 
 # app.config['PUBLIC_KEY'] = PUBLIC_KEY
