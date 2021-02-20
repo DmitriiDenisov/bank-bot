@@ -26,7 +26,7 @@ class SignUpSchema(Form):
 
 
 class AuthSchemaForm(Form):
-    username = EmailField('username', [validators.DataRequired(), validators.Email(), validators.Length(min=4, max=20)])
+    email = EmailField('email', [validators.DataRequired(), validators.Email(), validators.Length(min=4, max=20)])
     password = PasswordField('password', [validators.DataRequired()])
 
 

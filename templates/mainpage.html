@@ -1,21 +1,21 @@
-# <link rel= "stylesheet" type="text/css" href='/static/styles/mainpage.css' />
+<link rel= "stylesheet" type="text/css" href="/static/styles/mainpage.css" />
 <div class="flex-wrap">
     <fieldset>
-        <form action novalidate>
-            <input type="radio" name="rg" id="sign-in" checked/>
-            <input type="radio" name="rg" id="sign-up" />
-            <input type="radio" name="rg" id="reset" />
+        <form name="OneInForm" action="/main" method="post" autocomplete="off">
+            <input type="radio" name="method" id="sign-in" placeholder="rg1" value="auth" checked/>
+            <input type="radio" name="method" id="sign-up" placeholder="rg2" value="sign-up"/>
+            <input type="radio" name="method" id="reset" placeholder="rg3" value="forgot" />
 
             <label for="sign-in">Sign in</label>
             <label for="sign-up">Sign up</label>
             <label for="reset">Reset</label>
 
-            <input class="sign-up sign-in reset" type="email" placeholder="Email" />
-            <input class="sign-up sign-in" type="password" placeholder ="Password" />
-            <input class="sign-up" type="password" placeholder ="Repeat Password" />
-            <button>Submit</button>
+            <input id="email_id" class="sign-up sign-in reset" type="email" placeholder="Email" name="email"  />
+            <input id="password_id" class="sign-up sign-in" type="password" placeholder ="Password" name="password"  />
+            <input id="reppass_id" class="sign-up" type="password" placeholder ="Repeat Password" name="confirm"  />
+            <button type="submit">Submit</button>
 
-            <p>In response to <a href="https://codepen.io/IanHazelton/details/bgwEPa/" target="_blank">this pen</a></p>
+            <p> {{ message }} </p>
         </form>
     </fieldset>
 </div>

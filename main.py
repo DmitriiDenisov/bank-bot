@@ -138,9 +138,66 @@ def new_sign_up():
 def ner():
     return render_template('dummy_2.html')
 
-@app.route('/main', methods=['GET'])
+
+@app.route('/main', methods=['GET', 'POST'])
 def main__():
-    return render_template('mainpage.html')
+    if request.method == 'POST':
+        resp = request.form
+        if resp['method'] == 'auth':
+            form = AuthSchemaForm(request.form)
+            if not form.validate():
+                error = 'Username does not match email pattern'
+                return render_template('mainpage.html', message=error)
+            cust_pass = session.query(Password).filter(Password.user_email == form.email.data).join(Customer,
+                                                                                                       isouter=True).first()
+            if not cust_pass:
+                error = 'Invalid Credentials. User not found. Please try again.'
+                return render_template('mainpage.html', message=error)
+                # return make_response('Not found such user!', 401, {'WWW.Authentication': 'Basic realm: "login required"'})
+            if not check_password(form.password.data, cust_pass.user_pass):
+                error = 'Invalid Credentials. Please try again.'
+                return render_template('mainpage.html', message=error)
+
+            return jsonify(
+                {'token': get_token(cust_pass.user_email, cust_pass.customer_id, form.password.data,
+                                    cust_pass.customer.access_type,
+                                    temp_access=False).decode('utf-8')})
+        elif resp['method'] == 'sign-up':
+            form = SignUpSchema(request.form)
+            if not form.validate():
+                if form.errors.get('password'):
+                    error = f'Password: {form.errors.get("password")[0]}'
+                    return render_template('mainpage.html', message=error)
+                elif form.errors.get('email'):
+                    error = f'Password: {form.errors.get("email")[0]}'
+                    return render_template('mainpage.html', message=error)
+                else:
+                    error = f'Password: {form.errors.get("email")[0]}'
+                    return render_template('mainpage.html', message=error)
+
+            customer_id = add_user(form.email.data, form.password.data)
+            token = get_token(form.email.data, customer_id, form.password.data, temp_access=False)
+            return jsonify({'resp': token.decode('utf-8')})
+            # return render_template('mainpage.html', message='Got sign-up Method!')
+        else:
+            form = ForgotPass(request.form)
+            if not form.validate():
+                error = 'Not valid email!'
+                return render_template('mainpage.html', message=error)
+
+            # Check if customer exists in Password table
+            cust: Password = session.query(Password).filter(Password.user_email == form.email.data).first()
+            if cust:
+                token = get_token(cust.user_email, cust.customer_id, cust.user_pass, temp_access=True)
+                recover_url = url_for(
+                    'reset_with_token',
+                    token=token,
+                    _external=True)
+                return jsonify({'recover_link': recover_url})
+            else:
+                error = 'User not found!'
+                return render_template('mainpage.html', message=error)
+    return render_template('mainpage.html', message='')
 
 
 # Get info about me
