@@ -6,7 +6,7 @@ from flask import jsonify, make_response
 from sqlalchemy import case
 
 from models.transactions import Transaction
-from rabbitmq_utils.rmq_utils import publish_message
+# from rabbitmq_utils.rmq_utils import publish_message
 from utils.constants import PRIVATE_KEY, HOST_CURR_SERV, PORT_CURR_SERV
 from utils.schemas import AuthSchemaForm, SignUpSchema, ForgotPass, ResetPass, TransactionSchema, CurrencyChangeSchema
 from utils.add_user import add_user
@@ -21,6 +21,11 @@ from utils.token_auth import token_auth, TokenData
 
 # Define Flask app
 app = Flask(__name__, template_folder='templates', static_folder='static')
+from flask_assets import Environment, Bundle
+from flask_scss import Scss
+Scss(app, static_dir='static', asset_dir='s_asset')
+
+
 # app.config['PUBLIC_KEY'] = PUBLIC_KEY
 app.config['PRIVATE_KEY'] = PRIVATE_KEY
 
@@ -122,6 +127,20 @@ def reset_with_token(data: TokenData):
 @app.route('/ping', methods=['GET'])
 def ping():
     return jsonify({'resp': 'My test 2'})
+
+
+@app.route('/new', methods=['GET'])
+def new_sign_up():
+    return render_template('dummy.html')
+
+
+@app.route('/ner', methods=['GET'])
+def ner():
+    return render_template('dummy_2.html')
+
+@app.route('/main', methods=['GET'])
+def main__():
+    return render_template('mainpage.html')
 
 
 # Get info about me
