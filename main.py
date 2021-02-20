@@ -6,7 +6,7 @@ from flask import jsonify, make_response
 from sqlalchemy import case
 
 from models.transactions import Transaction
-# from rabbitmq_utils.rmq_utils import publish_message
+from rabbitmq_utils.rmq_utils import publish_message
 from utils.constants import PRIVATE_KEY, HOST_CURR_SERV, PORT_CURR_SERV
 from utils.schemas import AuthSchemaForm, SignUpSchema, ForgotPass, ResetPass, TransactionSchema, CurrencyChangeSchema
 from utils.add_user import add_user
@@ -30,77 +30,74 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 app.config['PRIVATE_KEY'] = PRIVATE_KEY
 
 
+# Just ping
+@app.route('/ping', methods=['GET'])
+def ping():
+    return jsonify({'resp': 'My test 2'})
+
+
+@app.route('/test', methods=['GET'])
+def _test():
+    return render_template('dummy.html')
+
+
+# Get info about me
+# token_auth decorator checks that token is valid
+@app.route('/me', methods=['GET'])
+@token_auth(app.config['PRIVATE_KEY'])
+def get_me(data: TokenData):
+    custs = session.query(Customer).filter(Customer.id == data.customer_id)
+    results = [
+        {
+            "first_name": cust.first_name,
+            "second_name": cust.second_name,
+            "join_date": cust.join_date
+        } for cust in custs]
+
+    return jsonify({"count": len(results), "custs": results})
+
+
 # Sign_up method. It receives login-pass, checks that this user does not exist, if exists then add it to DB and
 # create token for him
-@app.route('/sign_up', methods=['GET', 'POST'])
-def sign_up():
-    if request.method == 'POST':
-        form = SignUpSchema(request.form)
-        if not form.validate():
-            if form.errors.get('password'):
-                return jsonify({'resp': form.errors.get('password')[0]})
-            elif form.errors.get('email'):
-                return jsonify({'resp': form.errors.get('email')[0]})
-            else:
-                return jsonify({'resp': form.errors.get('email')[0]})
-                # return abort(400)
-
-        customer_id = add_user(form.email.data, form.password.data)
-        token = get_token(form.email.data, customer_id, form.password.data, temp_access=False)
-        return jsonify({'resp': token.decode('utf-8')})
-    return render_template('register.html', title='Register')
+def sign_up(form):
+    customer_id = add_user(form.email.data, form.password.data)
+    token = get_token(form.email.data, customer_id, form.password.data, temp_access=False)
+    return jsonify({'resp': token.decode('utf-8')})
 
 
 # Auth method. Called if previous token has expired. Checks that user exist in DB and password matches and creates
 # new token
-@app.route('/auth', methods=['GET', 'POST'])
-def auth():
-    error = None
-    if request.method == 'POST':
-        form = AuthSchemaForm(request.form)
-        if not form.validate():
-            # return abort(400)
-            error = 'Username does not match email pattern'
-            return render_template('login.html', error=error)
-        cust_pass = session.query(Password).filter(Password.user_email == form.username.data).join(Customer,
-                                                                                                   isouter=True).first()
-        if not cust_pass:
-            error = 'Invalid Credentials. Please try again.'
-            return render_template('login.html', error=error)
-            # return make_response('Not found such user!', 401, {'WWW.Authentication': 'Basic realm: "login required"'})
-        if not check_password(form.password.data, cust_pass.user_pass):
-            error = 'Invalid Credentials. Please try again.'
-            return render_template('login.html', error=error)
-            # return make_response('User password does not match!', 401,
-            #                     {'WWW.Authentication': 'Basic realm: "login required"'})
-        return jsonify(
-            {'token': get_token(cust_pass.user_email, cust_pass.customer_id, form.password.data,
-                                cust_pass.customer.access_type,
-                                temp_access=False).decode('utf-8')})
-    return render_template('login.html', error=error)
+def auth(form):
+    cust_pass = session.query(Password).filter(Password.user_email == form.email.data).join(Customer,
+                                                                                            isouter=True).first()
+    if not cust_pass:
+        error = 'Invalid Credentials. User not found. Please try again.'
+        return render_template('mainpage.html', message=error)
+        # return make_response('Not found such user!', 401, {'WWW.Authentication': 'Basic realm: "login required"'})
+    if not check_password(form.password.data, cust_pass.user_pass):
+        error = 'Invalid Credentials. Please try again.'
+        return render_template('mainpage.html', message=error)
+
+    return jsonify(
+        {'token': get_token(cust_pass.user_email, cust_pass.customer_id, form.password.data,
+                            cust_pass.customer.access_type,
+                            temp_access=False).decode('utf-8')})
 
 
 # Form for Forgot password. It generates one time link to method reset_with_token
-@app.route('/forgot', methods=['GET', 'POST'])
-def forgot():
-    if request.method == 'POST':
-        form = ForgotPass(request.form)
-        if not form.validate():
-            return jsonify({'message': 'Not valid email!'})
-
-        # Check if customer exists in Password table
-        cust: Password = session.query(Password).filter(Password.user_email == form.email.data).first()
-        if cust:
-            token = get_token(cust.user_email, cust.customer_id, cust.user_pass, temp_access=True)
-            recover_url = url_for(
-                'reset_with_token',
-                token=token,
-                _external=True)
-            return jsonify({'recover_link': recover_url})
-        else:
-            return jsonify({'message': 'User not found!'})
+def forgot(form):
+    # Check if customer exists in Password table
+    cust: Password = session.query(Password).filter(Password.user_email == form.email.data).first()
+    if cust:
+        token = get_token(cust.user_email, cust.customer_id, cust.user_pass, temp_access=True)
+        recover_url = url_for(
+            'reset_with_token',
+            token=token,
+            _external=True)
+        return jsonify({'recover_link': recover_url})
     else:
-        return render_template('forgot_pass.html')
+        error = 'User not found!'
+        return render_template('mainpage.html', message=error)
 
 
 # After /forgot is called it redirects to this /reset_with_token to set new password
@@ -123,24 +120,8 @@ def reset_with_token(data: TokenData):
     return render_template('reset_pass.html')
 
 
-# Just ping
-@app.route('/ping', methods=['GET'])
-def ping():
-    return jsonify({'resp': 'My test 2'})
-
-
-@app.route('/new', methods=['GET'])
-def new_sign_up():
-    return render_template('dummy.html')
-
-
-@app.route('/ner', methods=['GET'])
-def ner():
-    return render_template('dummy_2.html')
-
-
 @app.route('/main', methods=['GET', 'POST'])
-def main__():
+def _main():
     if request.method == 'POST':
         resp = request.form
         if resp['method'] == 'auth':
@@ -148,20 +129,7 @@ def main__():
             if not form.validate():
                 error = 'Username does not match email pattern'
                 return render_template('mainpage.html', message=error)
-            cust_pass = session.query(Password).filter(Password.user_email == form.email.data).join(Customer,
-                                                                                                       isouter=True).first()
-            if not cust_pass:
-                error = 'Invalid Credentials. User not found. Please try again.'
-                return render_template('mainpage.html', message=error)
-                # return make_response('Not found such user!', 401, {'WWW.Authentication': 'Basic realm: "login required"'})
-            if not check_password(form.password.data, cust_pass.user_pass):
-                error = 'Invalid Credentials. Please try again.'
-                return render_template('mainpage.html', message=error)
-
-            return jsonify(
-                {'token': get_token(cust_pass.user_email, cust_pass.customer_id, form.password.data,
-                                    cust_pass.customer.access_type,
-                                    temp_access=False).decode('utf-8')})
+            return auth(form)
         elif resp['method'] == 'sign-up':
             form = SignUpSchema(request.form)
             if not form.validate():
@@ -169,51 +137,19 @@ def main__():
                     error = f'Password: {form.errors.get("password")[0]}'
                     return render_template('mainpage.html', message=error)
                 elif form.errors.get('email'):
-                    error = f'Password: {form.errors.get("email")[0]}'
+                    error = f'Email: {form.errors.get("email")[0]}'
                     return render_template('mainpage.html', message=error)
                 else:
-                    error = f'Password: {form.errors.get("email")[0]}'
+                    error = f'Email: {form.errors.get("email")[0]}'
                     return render_template('mainpage.html', message=error)
-
-            customer_id = add_user(form.email.data, form.password.data)
-            token = get_token(form.email.data, customer_id, form.password.data, temp_access=False)
-            return jsonify({'resp': token.decode('utf-8')})
-            # return render_template('mainpage.html', message='Got sign-up Method!')
+            return sign_up(form)
         else:
             form = ForgotPass(request.form)
             if not form.validate():
                 error = 'Not valid email!'
                 return render_template('mainpage.html', message=error)
-
-            # Check if customer exists in Password table
-            cust: Password = session.query(Password).filter(Password.user_email == form.email.data).first()
-            if cust:
-                token = get_token(cust.user_email, cust.customer_id, cust.user_pass, temp_access=True)
-                recover_url = url_for(
-                    'reset_with_token',
-                    token=token,
-                    _external=True)
-                return jsonify({'recover_link': recover_url})
-            else:
-                error = 'User not found!'
-                return render_template('mainpage.html', message=error)
+            return forgot(form)
     return render_template('mainpage.html', message='')
-
-
-# Get info about me
-# token_auth decorator checks that token is valid
-@app.route('/me', methods=['GET'])
-@token_auth(app.config['PRIVATE_KEY'])
-def get_me(data: TokenData):
-    custs = session.query(Customer).filter(Customer.id == data.customer_id)
-    results = [
-        {
-            "first_name": cust.first_name,
-            "second_name": cust.second_name,
-            "join_date": cust.join_date
-        } for cust in custs]
-
-    return jsonify({"count": len(results), "custs": results})
 
 
 # Get info about all customers
