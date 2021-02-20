@@ -43,6 +43,7 @@ KEY_HS256=bcae2a8c35a0de3353977ed7af0de10731f62500e4588ca238 # Secret KEY which 
 2. RabbitMQ: port 15672 (automatically restarts once server is restarted). If you don't see queues check that you have access to virtual host. In order to do that in UI go to 'Admin' and check if you have access to virtual hosts
 3. Jenkins: port 9090 (automatically restarts once server is restarted)
 4. GitLab: port 9111 (automatically restarts once server is restarted, It may take some time or require additional computation power as developer recommends at least 4GB of RAM)
+5. Confluence: port 8090 (automatically restarts once server is restarted, but it might take some time. Also it has related DB in psql: confluence_db)
 
 
 ## How to Run only this repo (Flask and main api):
