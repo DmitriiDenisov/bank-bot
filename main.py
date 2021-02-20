@@ -168,7 +168,7 @@ def get_all_custs(data: TokenData):
     return {"count": len(results), "custs": results}
 
 
-@app.route('/do_transaction', methods=['GET'])
+@app.route('/do_transaction', methods=['POST'])
 @token_auth(app.config['PRIVATE_KEY'])
 def do_transaction(data: TokenData):
     params = TransactionSchema(request.args)
@@ -196,7 +196,7 @@ def do_transaction(data: TokenData):
     return jsonify({'message': 'Transaction made!'})
 
 
-@app.route('/own_transfer', methods=['GET'])
+@app.route('/own_transfer', methods=['POST'])
 @token_auth(app.config['PRIVATE_KEY'])
 def own_transfer(data: TokenData):
     # Get params
@@ -246,7 +246,7 @@ def get_trans(data: TokenData):
 
 
 # Delete customer from DB
-@app.route('/delete_user', methods=['GET', 'POST'])
+@app.route('/delete_user', methods=['POST'])
 @token_auth(app.config['PRIVATE_KEY'])
 def delete_user(data: TokenData):
     if not request.args.get('customer_id', type=int):
