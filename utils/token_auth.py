@@ -4,11 +4,11 @@ from jwt.exceptions import ExpiredSignatureError
 import jwt
 from flask import request, jsonify
 
-from crypto_utils.hash_password import check_password, get_hashed_password
+from crypto_utils.hash_password import check_hash
 from models.Passwords import Password
 from utils.base import session
 
-TokenData = namedtuple('TokenData', ['user_email', 'customer_id', 'access_type', 'exp', 'iat', 'temp_access', 'salt'])
+TokenData = namedtuple('TokenData', ['user_email', 'customer_id', 'access_type', 'exp', 'iat', 'temp_access', 'signature'])
 
 
 def token_auth(pub_key):
@@ -46,16 +46,14 @@ def token_auth(pub_key):
             # Transfer payload to namedtuple
             data = TokenData(**data)
 
-            # This is check only for temporary tokens for Forgot Password. Once password is changed => hash of salt
-            # will change We check that 'salt' parameter in payload matches with hash(customer_id + user_pass_hash +
+            # This is check only for temporary tokens for Forgot Password. Once password is changed => hash of signature
+            # will change. We check that 'signature' parameter in payload matches with hash(customer_id + user_pass_hash +
             # creation_date + token_uuid) Source:
             # https://security.stackexchange.com/questions/153746/one-time-jwt-token-with-jwt-id-claim
-            # TODO: think
-            #  about removing "if data.temp_access" because all tokens should be revoked once password is changed
             if data.temp_access:
                 cust: Password = session.query(Password).filter(Password.customer_id == data.customer_id).first()
                 token_uuid = jwt.get_unverified_header(token)['kid']
-                if not check_password(str(data.customer_id) + cust.user_pass + str(data.iat) + token_uuid, data.salt):
+                if not check_hash(str(data.customer_id) + cust.user_pass + str(data.iat) + token_uuid, data.signature):
                     return jsonify({'message': 'Token is invalid as you changed password'})
 
             if f.__name__ != 'reset_with_token' and data.temp_access:

@@ -1,5 +1,5 @@
 import datetime
-from crypto_utils.hash_password import get_hashed_password
+from crypto_utils.hash_password import get_hash
 from models.Passwords import Password
 from models.balances import Balance
 from models.customer import Customer
@@ -7,7 +7,7 @@ from utils.base import session
 
 
 def add_user(user_email, user_pass):
-    hashed_pass = get_hashed_password(user_pass)
+    hashed_pass = get_hash(user_pass)
     # ADD to DB new customer
     new_cust = Customer('New_user', 'flask_August', '@test', 0, datetime.datetime.utcnow())
     # ADD new bal to user
@@ -21,4 +21,4 @@ def add_user(user_email, user_pass):
     # commit is similar to git push ...
     session.commit()
 
-    return new_cust.id
+    return new_cust.id, hashed_pass

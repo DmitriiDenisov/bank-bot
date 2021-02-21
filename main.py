@@ -12,7 +12,7 @@ from utils.schemas import AuthSchemaForm, SignUpSchema, ForgotPass, ResetPass, T
 from utils.add_user import add_user
 from utils.base import session
 from crypto_utils.generate_token import get_token
-from crypto_utils.hash_password import check_password, get_hashed_password
+from crypto_utils.hash_password import check_hash, get_hash
 from models.Passwords import Password
 from models.balances import Balance
 from models.customer import Customer
@@ -60,8 +60,8 @@ def get_me(data: TokenData):
 # Sign_up method. It receives login-pass, checks that this user does not exist, if exists then add it to DB and
 # create token for him
 def sign_up(form):
-    customer_id = add_user(form.email.data, form.password.data)
-    token = get_token(form.email.data, customer_id, form.password.data, temp_access=False)
+    customer_id, hashed_pass = add_user(form.email.data, form.password.data)
+    token = get_token(form.email.data, customer_id, hashed_pass, temp_access=False)
     return jsonify({'resp': token.decode('utf-8')})
 
 
@@ -74,7 +74,7 @@ def auth(form):
         error = 'Invalid Credentials. User not found. Please try again.'
         return render_template('mainpage.html', message=error)
         # return make_response('Not found such user!', 401, {'WWW.Authentication': 'Basic realm: "login required"'})
-    if not check_password(form.password.data, cust_pass.user_pass):
+    if not check_hash(form.password.data, cust_pass.user_pass):
         error = 'Invalid Credentials. Please try again.'
         return render_template('mainpage.html', message=error)
 
@@ -110,7 +110,7 @@ def reset_with_token(data: TokenData):
             return jsonify({'resp': form.errors.get('password1')[0]})
 
         # get hash of new password
-        hashed_pass = get_hashed_password(form.password1.data)
+        hashed_pass = get_hash(form.password1.data)
         # Update user's hash pass in DB
         session.query(Password).filter(Password.customer_id == data.customer_id).update({"user_pass": hashed_pass})
         session.flush()
