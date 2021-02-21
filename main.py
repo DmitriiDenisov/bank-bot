@@ -265,4 +265,4 @@ def delete_user(data: TokenData):
 if __name__ == '__main__':
     # host='0.0.0.0' allows global connections, namely http://<ip_addess>:5001
     # Or for local access: http://172.20.10.2:5001/
-    app.run(debug=True, host='0.0.0.0', port=5001)
+    app.run(debug=True, host='0.0.0.0', port=9000)
