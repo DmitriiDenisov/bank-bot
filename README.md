@@ -91,7 +91,7 @@ Utils folder consists of:
 `hash_password.py` has two functions for get hash of password and check that password is legitimate
 This script uses bcrypt library which adds salt (randomly generated string) to password so from this for equal passwords we obtain different hashes
 Also Libraries like bcrypt are smart enough to store the salt IN the resulting string so that developers don’t need to do the extra work."
-https://hackernoon.com/hashing-passwords-in-python-bcrypt-tutorial-with-examples-77dh36ef
+[Bcrypt Library Tutorial](https://hackernoon.com/hashing-passwords-in-python-bcrypt-tutorial-with-examples-77dh36ef)
 
  file `api_queries.py` - main file which uses everything else. In order to run: `python api_queries.py`
 
