@@ -279,10 +279,22 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "example": {
+                "message": "Transaction made!"
+              }
+            }
           },
           "400": {
-            "description": "Invalid argumets!"
+            "description": "Invalid argumets",
+            "schema": {
+              "type": "string",
+              "example": {
+                "message": "Not valid arguments!"
+              }
+            }
           },
           "401": {
             "description": "Auth error",
@@ -290,6 +302,15 @@
               "type": "string",
               "example": {
                 "message": "a valid token is missing"
+              }
+            }
+          },
+          "422": {
+            "description": "Not enough money",
+            "schema": {
+              "type": "string",
+              "example": {
+                "message": "Not enough money on your balance!"
               }
             }
           }
@@ -351,10 +372,22 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "example": {
+                "message": "Success"
+              }
+            }
           },
           "400": {
-            "description": "Invalid argumets!"
+            "description": "Invalid argumets",
+            "schema": {
+              "type": "string",
+              "example": {
+                "message": "Not valid arguments!"
+              }
+            }
           },
           "401": {
             "description": "Auth error",
@@ -362,6 +395,15 @@
               "type": "string",
               "example": {
                 "message": "a valid token is missing"
+              }
+            }
+          },
+          "422": {
+            "description": "Not enough money",
+            "schema": {
+              "type": "string",
+              "example": {
+                "message": "Not enough money!"
               }
             }
           }

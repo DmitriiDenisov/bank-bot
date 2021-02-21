@@ -174,8 +174,8 @@ def do_transaction(data: TokenData):
     params = TransactionSchema(request.args)
     if not params.validate():
         if params.errors.get('customer_id_to'):
-            return abort(400, params.errors.get('customer_id_to')[0])
-        abort(400, 'Not valid arguments!')
+            return jsonify({'message': params.errors.get('customer_id_to')[0]}), 400
+        return jsonify({'message': 'Not valid arguments!'}), 400
     # params = TransactionSchema().load(request.args)
 
     # Get parameters from args
@@ -185,7 +185,7 @@ def do_transaction(data: TokenData):
     # Check if customer has enough balance
     balance = session.query(Balance).filter(Balance.customer_id == data.customer_id).first()
     if getattr(balance, currency) < amount:
-        return jsonify({'message': 'Not enough money on your balance!'})
+        return jsonify({'message': 'Not enough money on your balance!'}), 422
 
     # Publish message to RabbitMQ:
     publish_message({'customer_id': data.customer_id,
@@ -193,7 +193,7 @@ def do_transaction(data: TokenData):
                      'amount': amount,
                      'currency': currency}, queue='transactions')
 
-    return jsonify({'message': 'Transaction made!'})
+    return jsonify({'message': 'Transaction made!'}), 200
 
 
 @app.route('/own_transfer', methods=['POST'])
@@ -202,7 +202,7 @@ def own_transfer(data: TokenData):
     # Get params
     params = CurrencyChangeSchema(request.args)
     if not params.validate():
-        return abort(400, 'Wrong parameters!')
+        return jsonify({'message': 'Not valid arguments!'}), 400
 
     # Get rate for given pair of currencies
     response = requests.get(f'http://{HOST_CURR_SERV}:{PORT_CURR_SERV}/get_rates',
@@ -217,7 +217,7 @@ def own_transfer(data: TokenData):
     # Check if user has enough money on his balance
     cust: Balance = session.query(Balance).filter(Balance.customer_id == data.customer_id).first()
     if getattr(cust, from_str) < params.amount.data:
-        return jsonify({'resp': 'Not enough money!'})
+        return jsonify({'message': 'Not enough money!'}), 422
 
     publish_message(json_body={'customer_id': data.customer_id,
                                'from_str': from_str,
@@ -225,7 +225,7 @@ def own_transfer(data: TokenData):
                                'to_str': to_str,
                                'amount_add': add}, queue='own_transaction')
 
-    return jsonify({'resp': 'success'})
+    return jsonify({'message': 'Success'}), 200
 
 
 # Get my all transactions
@@ -262,7 +262,7 @@ def delete_user(data: TokenData):
         return jsonify({'resp': 'Not found such user!'})
 
 
-@app.route('/api/docs', methods=['GET'])
+@app.route('/docs', methods=['GET'])
 def get_docs():
     return render_template('swaggerui.html')
 
