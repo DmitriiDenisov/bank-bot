@@ -262,6 +262,7 @@ def delete_user(data: TokenData):
         return jsonify({'resp': 'Not found such user!'})
 
 
+
 @app.route('/docs', methods=['GET'])
 def get_docs():
     return render_template('swaggerui.html')
