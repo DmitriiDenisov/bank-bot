@@ -1,0 +1,374 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is a documentation of `bank-bot` APIs.  You can find out more about the project itself at [GitHub Repo](https://github.com/DmitriiDenisov/bank-bot)",
+    "version": "1.0.0",
+    "title": "Swagger docs Bank-Bot",
+    "contact": {
+      "email": "dmitryhse@gmail.com"
+    }
+  },
+  "host": "34.121.35.34:5001",
+  "basePath": "/main",
+  "tags": [
+    {
+      "name": "Testing methods",
+      "description": "Everything for testing/developing/admin"
+    },
+    {
+      "name": "Bank-bot-methods",
+      "description": "Front Methods for customers"
+    }
+  ],
+  "paths": {
+    "/ping": {
+      "get": {
+        "summary": "Just ping server",
+        "tags": [
+          "Testing methods"
+        ],
+        "description": "Just ping",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "example": "My test 2"
+            }
+          }
+        }
+      }
+    },
+    "/test": {
+      "get": {
+        "tags": [
+          "Testing methods"
+        ],
+        "description": "Just another test method",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "example": "My test 2"
+            }
+          }
+        }
+      }
+    },
+    "/me": {
+      "get": {
+        "tags": [
+          "Testing methods"
+        ],
+        "description": "Get info about me",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "key",
+            "required": true,
+            "description": "token for this method",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Auth error",
+            "schema": {
+              "type": "string",
+              "example": {
+                "message": "a valid token is missing"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/custs": {
+      "get": {
+        "tags": [
+          "Testing methods"
+        ],
+        "description": "Get info about all customers",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "key",
+            "required": true,
+            "description": "token for this method",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Auth error",
+            "schema": {
+              "type": "string",
+              "example": {
+                "message": "a valid token is missing"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get_trans": {
+      "get": {
+        "tags": [
+          "Testing methods"
+        ],
+        "description": "Get my all transactions",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "key",
+            "required": true,
+            "description": "token for this method",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Auth error",
+            "schema": {
+              "type": "string",
+              "example": {
+                "message": "a valid token is missing"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/delete_user": {
+      "delete": {
+        "tags": [
+          "Testing methods"
+        ],
+        "description": "Get my all transactions",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "customer_id",
+            "description": "customer to be deleted",
+            "type": "integer",
+            "default": 35
+          },
+          {
+            "in": "header",
+            "name": "key",
+            "required": true,
+            "description": "token for this method",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Auth error",
+            "schema": {
+              "type": "string",
+              "example": {
+                "message": "a valid token is missing"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/main": {
+      "get": {
+        "summary": "Renders the main page with signin/signup/auth",
+        "tags": [
+          "Bank-bot-methods"
+        ],
+        "description": "Main page for signin/signup/auth",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/reset_with_token": {
+      "post": {
+        "description": "After /forgot is called it redirects to this /reset_with_token to set new password",
+        "tags": [
+          "Bank-bot-methods"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "key",
+            "required": true,
+            "description": "token for this method",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Auth error",
+            "schema": {
+              "type": "string",
+              "example": {
+                "message": "a valid token is missing"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/do_transaction": {
+      "post": {
+        "description": "By given parameters it does transaction",
+        "tags": [
+          "Bank-bot-methods"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "customer_id_to",
+            "required": true,
+            "description": "Customer id to whom you transfer money",
+            "type": "integer",
+            "default": 9
+          },
+          {
+            "in": "query",
+            "name": "amount",
+            "required": true,
+            "description": "Amount of money to be transferred",
+            "type": "number",
+            "default": 1.4
+          },
+          {
+            "in": "query",
+            "name": "currency",
+            "required": true,
+            "description": "Currency in which money are transferred",
+            "type": "array",
+            "items": {
+              "enum": [
+                "aed",
+                "usd",
+                "eur"
+              ],
+              "default": "aed"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "in": "header",
+            "name": "key",
+            "required": true,
+            "description": "token for this method",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Invalid argumets!"
+          },
+          "401": {
+            "description": "Auth error",
+            "schema": {
+              "type": "string",
+              "example": {
+                "message": "a valid token is missing"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/own_transfer": {
+      "post": {
+        "description": "By given parameters it does transaction",
+        "tags": [
+          "Bank-bot-methods"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "curr_from",
+            "required": true,
+            "description": "Name of currency from",
+            "type": "array",
+            "items": {
+              "enum": [
+                "aed",
+                "usd",
+                "eur"
+              ],
+              "default": "usd"
+            }
+          },
+          {
+            "in": "query",
+            "name": "curr_to",
+            "required": true,
+            "description": "Name of currency to",
+            "type": "array",
+            "items": {
+              "enum": [
+                "aed",
+                "usd",
+                "eur"
+              ],
+              "default": "aed"
+            }
+          },
+          {
+            "in": "query",
+            "name": "amount",
+            "required": true,
+            "description": "Amount of money to be transferred",
+            "type": "number",
+            "default": 1
+          },
+          {
+            "in": "header",
+            "name": "key",
+            "required": true,
+            "description": "token for this method",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Invalid argumets!"
+          },
+          "401": {
+            "description": "Auth error",
+            "schema": {
+              "type": "string",
+              "example": {
+                "message": "a valid token is missing"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

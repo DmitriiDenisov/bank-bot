@@ -246,7 +246,7 @@ def get_trans(data: TokenData):
 
 
 # Delete customer from DB
-@app.route('/delete_user', methods=['POST'])
+@app.route('/delete_user', methods=['DELETE'])
 @token_auth(app.config['PRIVATE_KEY'])
 def delete_user(data: TokenData):
     if not request.args.get('customer_id', type=int):
@@ -260,6 +260,11 @@ def delete_user(data: TokenData):
         return jsonify({'resp': 'User removed!'})
     else:
         return jsonify({'resp': 'Not found such user!'})
+
+
+@app.route('/api/docs', methods=['GET'])
+def get_docs():
+    return render_template('swaggerui.html')
 
 
 if __name__ == '__main__':
