@@ -8,8 +8,6 @@
       "email": "dmitryhse@gmail.com"
     }
   },
-  "host": "34.121.35.34:5001",
-  "basePath": "/main",
   "tags": [
     {
       "name": "Testing methods",
