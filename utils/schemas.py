@@ -3,7 +3,7 @@ from marshmallow import Schema, fields
 from wtforms import PasswordField, validators, Form, StringField, DateField, IntegerField, FloatField
 from wtforms.fields.html5 import EmailField
 import wtforms_json
-from wtforms.validators import EqualTo, InputRequired, ValidationError
+from wtforms.validators import EqualTo, InputRequired, ValidationError, NumberRange
 
 from models.Passwords import Password
 from models.customer import Customer
@@ -50,7 +50,8 @@ class ResetPass(Form):
 class TransactionSchema(Form):
     customer_id_to = IntegerField('customer_id_to', [validators.DataRequired()])
     currency = StringField('currency', [validators.DataRequired()])
-    amount = FloatField('amount', [validators.DataRequired()])
+    amount = FloatField('amount', [validators.DataRequired(),
+                                   NumberRange(min=0, message='Enter amount greater than 0!')])
 
     def validate_customer_id_to(self, customer_id_to):
         if not session.query(Customer).filter(Customer.id == customer_id_to.data).first():
@@ -66,4 +67,5 @@ class CurrencyChangeSchema(Form):
                             validators=[validators.DataRequired(), validators.AnyOf(['USD', 'EUR', 'AED'])])
     curr_to = StringField('curr_to', filters=[lambda x: x.upper()],
                           validators=[validators.DataRequired(), validators.AnyOf(['USD', 'EUR', 'AED'])])
-    amount = FloatField('amount', [validators.DataRequired()])
+    amount = FloatField('amount', [validators.DataRequired(),
+                                   NumberRange(min=0, message='Enter amount greater than 0!')])
