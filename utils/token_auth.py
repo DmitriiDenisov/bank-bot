@@ -25,7 +25,7 @@ def token_auth(pub_key):
             elif f.__name__ == 'reset_with_token' and 'token' in request.args:
                 token = request.args['token']
             if not token:
-                return jsonify({'message': 'a valid token is missing'})
+                return jsonify({'message': 'a valid token is missing'}), 401
             # Try to decode token (only get payload, header and verify signature)
             # How does Electronic signature work:
             # 1. We have message X
@@ -39,9 +39,9 @@ def token_auth(pub_key):
                 # Get Payload
                 data = jwt.decode(token, pub_key)
             except ExpiredSignatureError:
-                return jsonify({'message': 'Signature has expired! Try auth method'})
+                return jsonify({'message': 'Signature has expired! Try auth method'}), 401
             except:
-                return jsonify({'message': 'token is invalid'})
+                return jsonify({'message': 'token is invalid'}), 401
 
             # Transfer payload to namedtuple
             data = TokenData(**data)
@@ -54,10 +54,10 @@ def token_auth(pub_key):
                 cust: Password = session.query(Password).filter(Password.customer_id == data.customer_id).first()
                 token_uuid = jwt.get_unverified_header(token)['kid']
                 if not check_hash(str(data.customer_id) + cust.user_pass + str(data.iat) + token_uuid, data.signature):
-                    return jsonify({'message': 'Token is invalid as you changed password'})
+                    return jsonify({'message': 'Token is invalid as you changed password'}), 401
 
             if f.__name__ != 'reset_with_token' and data.temp_access:
-                return jsonify({'message': 'Token does not have access to this method!'})
+                return jsonify({'message': 'Token does not have access to this method!'}), 401
             return f(data, *args, **kwargs)
 
         return decorator

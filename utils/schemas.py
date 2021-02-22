@@ -20,6 +20,8 @@ class SignUpSchema(Form):
     password = PasswordField('password', [InputRequired(), EqualTo('confirm', message='Passwords must match')])
     confirm = PasswordField('confirm')
 
+    # It is better to put all business logic outside (!) wtforms, but in this case it is just for example
+    # how custom validators work
     def validate_email(self, email):
         if session.query(Password).filter(Password.user_email == email.data).first():
             raise ValidationError('User alredy exists!')
@@ -51,7 +53,7 @@ class TransactionSchema(Form):
     customer_id_to = IntegerField('customer_id_to', [validators.DataRequired()])
     currency = StringField('currency', [validators.DataRequired()])
     amount = FloatField('amount', [validators.DataRequired(),
-                                   NumberRange(min=0, message='Enter amount greater than 0!')])
+                                   NumberRange(min=0)])
 
     def validate_customer_id_to(self, customer_id_to):
         if not session.query(Customer).filter(Customer.id == customer_id_to.data).first():
