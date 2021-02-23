@@ -116,7 +116,7 @@ def reset_with_token(data: TokenData):
     return render_template('reset_pass.html'), 200
 
 
-@app.route('/main', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def _main():
     if request.method == 'POST':
         resp = request.form
