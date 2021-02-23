@@ -8,6 +8,8 @@
       "email": "dmitryhse@gmail.com"
     }
   },
+  "host": "34.121.35.34:5001",
+  "basePath": "/main",
   "tags": [
     {
       "name": "Testing methods",
@@ -31,7 +33,9 @@
             "description": "OK",
             "schema": {
               "type": "string",
-              "example": "My test 2"
+              "example": {
+                "resp": "My test 2"
+              }
             }
           }
         }
@@ -45,11 +49,7 @@
         "description": "Just another test method",
         "responses": {
           "200": {
-            "description": "OK",
-            "schema": {
-              "type": "string",
-              "example": "My test 2"
-            }
+            "description": "OK"
           }
         }
       }
@@ -211,6 +211,20 @@
             "name": "key",
             "required": true,
             "description": "token for this method",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "password1",
+            "required": true,
+            "description": "new password",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "password2",
+            "required": true,
+            "description": "confirm of new password",
             "type": "string"
           }
         ],
