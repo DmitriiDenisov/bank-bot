@@ -197,6 +197,46 @@
         }
       }
     },
+    "/my_bal": {
+      "get": {
+        "summary": "Allows to get my balance",
+        "tags": [
+          "Bank-bot-methods"
+        ],
+        "description": "Get your balance",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "key",
+            "required": true,
+            "description": "token for this method",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "example": {
+                "aed_amt": 103.67,
+                "eur_amt": 98.6,
+                "usd_amt": 112
+              }
+            }
+          },
+          "401": {
+            "description": "Auth error",
+            "schema": {
+              "type": "string",
+              "example": {
+                "message": "a valid token is missing"
+              }
+            }
+          }
+        }
+      }
+    },
     "/reset_with_token": {
       "post": {
         "consumes": [

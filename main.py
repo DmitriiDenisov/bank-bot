@@ -164,7 +164,6 @@ def get_all_custs(data: TokenData):
     return jsonify({"count": len(results), "custs": results}), 200
 
 
-
 @app.route('/do_transaction', methods=['POST'])
 @token_auth(app.config['PRIVATE_KEY'])
 def do_transaction(data: TokenData):
@@ -237,6 +236,15 @@ def get_trans(data: TokenData):
          }
         for trans in transactions]
     return jsonify({'results': results}), 200
+
+
+# Get my balance
+@app.route('/my_bal', methods=['GET'])
+@token_auth(app.config['PRIVATE_KEY'])
+def my_bal(data: TokenData):
+    balance: Balance = session.query(Balance).filter(Balance.customer_id == data.customer_id).first()
+    results = {'aed_amt': balance.aed_amt, 'usd_amt': balance.usd_amt, 'eur_amt': balance.eur_amt}
+    return jsonify(results), 200
 
 
 # Delete customer from DB
