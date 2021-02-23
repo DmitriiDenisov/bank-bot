@@ -8,7 +8,8 @@ from sqlalchemy import case
 from models.transactions import Transaction
 from rabbitmq_utils.rmq_utils import publish_message
 from utils.constants import PRIVATE_KEY, HOST_CURR_SERV, PORT_CURR_SERV
-from utils.schemas import AuthSchemaForm, SignUpSchema, ForgotPass, ResetPass, TransactionSchema, CurrencyChangeSchema
+from utils.schemas import AuthSchemaForm, SignUpSchema, ForgotPass, ResetPass, TransactionSchema, CurrencyChangeSchema, \
+    TopUp
 from utils.add_user import add_user
 from utils.base import session
 from crypto_utils.generate_token import get_token
@@ -51,6 +52,20 @@ def get_me(data: TokenData):
         } for cust in custs]
 
     return jsonify({"count": len(results), "custs": results}), 200
+
+
+@app.route('/topup', methods=['POST'])
+@token_auth(app.config['PRIVATE_KEY'])
+def topup(data: TokenData):
+    params = TopUp(request.args)
+    if not params.validate():
+        return jsonify({'message': 'Not valid arguments!'}), 400
+    curr_str = f"{params.currency.data.lower()}_amt"
+    session.query(Balance).filter(Balance.customer_id == data.customer_id).update(
+        {curr_str: (getattr(Balance, curr_str) + params.amount.data)})
+    session.flush()
+    session.commit()
+    return jsonify({'message': 'TopUp successful!'}), 200
 
 
 # Sign_up method. It receives login-pass, checks that this user does not exist, if exists then add it to DB and

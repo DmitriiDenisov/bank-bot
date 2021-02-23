@@ -49,9 +49,16 @@ class ResetPass(Form):
     password2 = PasswordField('password2')
 
 
+class TopUp(Form):
+    amount = FloatField('amount', [validators.DataRequired(), NumberRange(min=0, max=10000000)])
+    currency = StringField('currency', filters=[lambda x: x.upper()],
+                           validators=[validators.DataRequired(), validators.AnyOf(['USD', 'EUR', 'AED'])])
+
+
 class TransactionSchema(Form):
     customer_id_to = IntegerField('customer_id_to', [validators.DataRequired()])
-    currency = StringField('currency', [validators.DataRequired()])
+    currency = StringField('currency', filters=[lambda x: x.upper()],
+                           validators=[validators.DataRequired(), validators.AnyOf(['USD', 'EUR', 'AED'])])
     amount = FloatField('amount', [validators.DataRequired(),
                                    NumberRange(min=0)])
 

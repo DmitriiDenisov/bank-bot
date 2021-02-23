@@ -145,6 +145,66 @@
         }
       }
     },
+    "/topup": {
+      "post": {
+        "tags": [
+          "Testing methods"
+        ],
+        "description": "TopUp your balance so far for free :)",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "currency",
+            "required": true,
+            "description": "name of currency (AED/USD/EUR)",
+            "type": "array",
+            "items": {
+              "enum": [
+                "aed",
+                "usd",
+                "eur"
+              ],
+              "default": "aed"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "in": "query",
+            "name": "amount",
+            "required": true,
+            "description": "amount of TopUp",
+            "type": "number"
+          },
+          {
+            "in": "header",
+            "name": "key",
+            "required": true,
+            "description": "token for this method",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "example": {
+                "message": "TopUp successful!"
+              }
+            }
+          },
+          "401": {
+            "description": "Auth error",
+            "schema": {
+              "type": "string",
+              "example": {
+                "message": "a valid token is missing"
+              }
+            }
+          }
+        }
+      }
+    },
     "/delete_user": {
       "delete": {
         "tags": [
