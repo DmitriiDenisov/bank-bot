@@ -202,7 +202,7 @@ def own_transfer(data: TokenData):
     response = requests.get(f'http://{HOST_CURR_SERV}:{PORT_CURR_SERV}/get_rates',
                             params={'curr_from': params.curr_from.data.upper(), 'curr_to': params.curr_to.data.upper()})
     if response.status_code == 404:
-        return jsonify({'Internal currency service is down'}), 500
+        return jsonify({'message': 'Internal currency service is down'}), 500
     rate = response.json()['rate']
     add = round(params.amount.data * rate, 2)
     from_str = f"{params.curr_from.data.lower()}_amt"

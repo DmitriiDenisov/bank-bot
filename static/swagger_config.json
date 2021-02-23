@@ -216,7 +216,13 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "example": {
+                "resp": "success"
+              }
+            }
           },
           "401": {
             "description": "Auth error",
@@ -304,15 +310,6 @@
                 "message": "a valid token is missing"
               }
             }
-          },
-          "422": {
-            "description": "Not enough money",
-            "schema": {
-              "type": "string",
-              "example": {
-                "message": "Not enough money on your balance!"
-              }
-            }
           }
         }
       }
@@ -398,12 +395,12 @@
               }
             }
           },
-          "422": {
-            "description": "Not enough money",
+          "500": {
+            "description": "Internal server error",
             "schema": {
               "type": "string",
               "example": {
-                "message": "Not enough money!"
+                "message": "Internal currency service is down"
               }
             }
           }
