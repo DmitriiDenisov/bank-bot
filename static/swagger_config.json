@@ -201,27 +201,30 @@
     },
     "/reset_with_token": {
       "post": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
         "description": "After /forgot is called it redirects to this /reset_with_token to set new password",
         "tags": [
           "Bank-bot-methods"
         ],
         "parameters": [
           {
-            "in": "header",
-            "name": "key",
+            "in": "formData",
+            "name": "token",
             "required": true,
             "description": "token for this method",
             "type": "string"
           },
           {
-            "in": "query",
+            "in": "formData",
             "name": "password1",
             "required": true,
             "description": "new password",
             "type": "string"
           },
           {
-            "in": "query",
+            "in": "formData",
             "name": "password2",
             "required": true,
             "description": "confirm of new password",

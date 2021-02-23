@@ -103,7 +103,7 @@ def reset_with_token(data: TokenData):
     if request.method == 'POST':
         form = ResetPass(request.form)
         if not form.validate():
-            return jsonify({'resp': form.errors.get('password1')[0]}), 401
+            return jsonify({'message': 'Not valid arguments!'}), 400
 
         # get hash of new password
         hashed_pass = get_hash(form.password1.data)
