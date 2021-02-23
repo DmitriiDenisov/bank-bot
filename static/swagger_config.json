@@ -218,6 +218,7 @@
             "in": "formData",
             "name": "password1",
             "required": true,
+            "format": "password",
             "description": "new password",
             "type": "string"
           },
@@ -225,6 +226,7 @@
             "in": "formData",
             "name": "password2",
             "required": true,
+            "format": "password",
             "description": "confirm of new password",
             "type": "string"
           }
