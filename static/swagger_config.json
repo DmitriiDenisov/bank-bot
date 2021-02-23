@@ -8,8 +8,6 @@
       "email": "dmitryhse@gmail.com"
     }
   },
-  "host": "34.121.35.34:5001",
-  "basePath": "/main",
   "tags": [
     {
       "name": "Testing methods",
@@ -202,7 +200,7 @@
     "/reset_with_token": {
       "post": {
         "consumes": [
-          "application/x-www-form-urlencoded"
+          "multipart/form-data"
         ],
         "description": "After /forgot is called it redirects to this /reset_with_token to set new password",
         "tags": [
@@ -210,7 +208,7 @@
         ],
         "parameters": [
           {
-            "in": "formData",
+            "in": "query",
             "name": "token",
             "required": true,
             "description": "token for this method",
