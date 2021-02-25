@@ -188,7 +188,7 @@ def do_transaction(data: TokenData):
 
     # Get parameters from args
     amount = params.amount.data
-    currency = f'{params.currency.data}_amt'
+    currency = f'{params.currency.data.lower()}_amt'
 
     # Check if customer has enough balance
     balance = session.query(Balance).filter(Balance.customer_id == data.customer_id).first()
@@ -287,4 +287,4 @@ def get_docs():
 if __name__ == '__main__':
     # host='0.0.0.0' allows global connections, namely http://<ip_addess>:5001
     # Or for local access: http://172.20.10.2:5001/
-    app.run(debug=True, host='0.0.0.0', port=80)
+    app.run(debug=True, host='0.0.0.0', port=5001)
