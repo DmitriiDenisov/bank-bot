@@ -44,7 +44,6 @@ KEY_HS256=bcae2a8c35a0de3353977ed7af0de10731f62500e4588ca238 # Secret KEY which 
 3. [Jenkins](https://github.com/DmitriiDenisov/Jenkins-lab): port 8083 (automatically restarts once server is restarted)
 4. [GitLab](https://github.com/DmitriiDenisov/Gitlab-lab): port 9111 (automatically restarts once server is restarted, It may take some time or require additional computation power as developer recommends at least 4GB of RAM)
 5. [Confluence](https://github.com/DmitriiDenisov/Confluence-lab): port 8090 (automatically restarts once server is restarted, but it might take some time. Also it has related DB in psql: confluence_db)
-6. [DataBase](https://github.com/DmitriiDenisov/bank-bot-db): this repo has dump of DataBase in file `bank_bot_db.dump`
 
 Useful command to find which process is listening to given port: `sudo lsof -i :9091`
 
