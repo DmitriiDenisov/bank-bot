@@ -145,7 +145,7 @@ def _main():
             form = SignUpSchema(request.form)
             if not form.validate():
                 if form.errors.get('password'):
-                    error = f'Password: {form.errors.get("password")[0]}'
+                    error = f'Password(s): {form.errors.get("password")[0]}'
                     return render_template('mainpage.html', message=error), 400
                 elif form.errors.get('email'):
                     error = f'Email: {form.errors.get("email")[0]}'
