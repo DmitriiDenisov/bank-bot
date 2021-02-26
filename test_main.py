@@ -2,7 +2,7 @@
 import json
 from main import app
 from environs import Env
-import unittest
+import pytest
 
 client = app.test_client()
 
@@ -11,16 +11,32 @@ env.read_env('.env')  # read .env file, if it exists
 TEST_TOKEN = env("TEST_TOKEN")
 
 
-def test_get_trans():
+@pytest.mark.parametrize(
+    "params",
+    [
+        # This is just an example how to pass parameters inside
+        pytest.param([1, 'asd', 3], id="Test get_vertices 1"),
+        pytest.param([[1, 23], 'asd', {'key': 23}], id="Test get_vertices 2")
+    ],
+)
+def test_get_trans(capsys, caplog, params):
+    print('AAAA')
+    print(params)
+    print('BBB')
     response = client.get('/get_trans',
                           headers={
                               'key': TEST_TOKEN})
     assert response.status_code == 200
-    assert type(json.loads(response.data.decode('utf-8'))
-                ['results']) == type(list())
+    assert isinstance(json.loads(response.data.decode('utf-8'))['results'], list)
 
 
-def test_my_bal():
+@pytest.mark.parametrize(
+    "params",
+    [
+        pytest.param([], id="Test my_bal method")
+    ],
+)
+def test_my_bal(capsys, caplog, params):
     response = client.get('/my_bal',
                           # data=json.dumps({'email': 'dmitryhse@gmail.com', 'password': '12'}),
                           # content_type='multipart/form-data',
@@ -33,7 +49,13 @@ def test_my_bal():
         "usd_amt": 20.0}
 
 
-def test_own_transfer():
+@pytest.mark.parametrize(
+    "params",
+    [
+        pytest.param([], id="Test own_transfer method")
+    ],
+)
+def test_own_transfer(capsys, caplog, params):
     response = client.post('/own_transfer',
                            query_string={'curr_from': 'usd',
                                          'curr_to': 'aed', 'amount': 1},
@@ -54,7 +76,13 @@ def test_own_transfer():
     assert json.loads(response.data.decode('utf-8')) == {"message": "Success"}
 
 
-def test_topup_and_transaction():
+@pytest.mark.parametrize(
+    "params",
+    [
+        pytest.param([], id="Test topup and do_transaction methods")
+    ],
+)
+def test_topup_and_transaction(capsys, caplog, params):
     response = client.post('/topup',
                            query_string={'currency': 'aed', 'amount': 10},
                            # content_type='multipart/form-data',
@@ -76,7 +104,13 @@ def test_topup_and_transaction():
                       ) == {"message": "Transaction made!"}
 
 
-def test_main_new():
+@pytest.mark.parametrize(
+    "params",
+    [
+        pytest.param([], id="Test main auth method")
+    ],
+)
+def test_main_new(capsys, caplog, params):
     response = client.post('/',
                            content_type='multipart/form-data',
                            data={'method': 'auth', 'email': 'dmitryhse@gmail.com',
@@ -89,7 +123,13 @@ def test_main_new():
     assert 'Invalid Credentials. Please try again.' in str(response.data)
 
 
-def test_main():
+@pytest.mark.parametrize(
+    "params",
+    [
+        pytest.param([], id="Test main sign-up method")
+    ],
+)
+def test_main(capsys, caplog, params):
     response = client.post('/',
                            content_type='multipart/form-data',
                            data={'method': 'sign-up', 'email': 'dmitryhse@gmail.com',
