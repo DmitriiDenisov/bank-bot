@@ -7,6 +7,7 @@ from flask import request, jsonify
 from crypto_utils.hash_password import check_hash
 from models.Passwords import Password
 from utils.base import session
+from utils.constants import ALG
 
 TokenData = namedtuple('TokenData', ['user_email', 'customer_id', 'access_type', 'exp', 'iat', 'temp_access', 'signature'])
 
@@ -37,7 +38,7 @@ def token_auth(pub_key):
             # 7. Compare result from 6 and 7. If equal => legitimate
             try:
                 # Get Payload
-                data = jwt.decode(token, pub_key)
+                data = jwt.decode(token, pub_key, algorithms=[ALG])
             except ExpiredSignatureError:
                 return jsonify({'message': 'Signature has expired! Try auth method'}), 401
             except:

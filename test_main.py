@@ -1,4 +1,15 @@
-# test main.py
+# Examples how to RUN:
+# (BEFORE RUNNING TESTS!): Activate source of virtualenv: source venv/bin/activate
+# python -m pytest test_main.py
+# python -m pytest test_main.py  -v
+# python -m pytest test_main.py  -vv
+# python -m pytest test_main.py  -v --skipslow
+# python -m pytest test_main.py -v --log-cli-level=DEBUG
+
+# "pip install pytest-cov" (This plugin produces coverage reports) for:
+#  python -m pytest --cov=. --cov-branch -v test_main.py
+# --------------------------------------------------
+# ----
 import json
 from main import app
 from environs import Env

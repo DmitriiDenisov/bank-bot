@@ -45,6 +45,6 @@ typing-extensions==3.7.4.2
 typing-inspect==0.6.0
 urllib3==1.25.9
 Werkzeug==1.0.1
-WTForms==2.3.1
+WTForms==2.3.3
 WTForms-JSON==0.3.3
 pika==1.1.0
