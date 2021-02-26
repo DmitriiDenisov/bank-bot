@@ -1,7 +1,7 @@
 <link rel= "stylesheet" type="text/css" href="/static/css/mainpage.css" />
 <div class="flex-wrap">
     <fieldset>
-        <form name="OneInForm" action="/" method="post" autocomplete="off">
+        <form validate name="OneInForm" action="/" method="post" autocomplete="off">
             <input type="radio" name="method" id="sign-in" placeholder="rg1" value="auth" checked/>
             <input type="radio" name="method" id="sign-up" placeholder="rg2" value="sign-up"/>
             <input type="radio" name="method" id="reset" placeholder="rg3" value="forgot" />
@@ -10,7 +10,7 @@
             <label for="sign-up">Sign up</label>
             <label for="reset">Reset</label>
 
-            <input id="email_id" class="sign-up sign-in reset" type="email" placeholder="Email" name="email"  />
+            <input id="email_id" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required="required" class="sign-up sign-in reset" type="email" placeholder="Email" name="email"  />
             <input id="password_id" class="sign-up sign-in" type="password" placeholder ="Password" name="password"  />
             <input id="reppass_id" class="sign-up" type="password" placeholder ="Repeat Password" name="confirm"  />
             <button type="submit">Submit</button>
