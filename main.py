@@ -1,10 +1,6 @@
-from typing import List
-
 import requests
-from flask import Flask, request, abort, url_for
-from flask import jsonify, make_response
-from sqlalchemy import case
-
+from flask import Flask, request
+from flask import jsonify
 from models.transactions import Transaction
 from rabbitmq_utils.rmq_utils import publish_message
 from utils.constants import PRIVATE_KEY, HOST_CURR_SERV, PORT_CURR_SERV
@@ -17,7 +13,7 @@ from crypto_utils.hash_password import check_hash, get_hash
 from models.Passwords import Password
 from models.balances import Balance
 from models.customer import Customer
-from flask import redirect, url_for, render_template
+from flask import url_for, render_template
 from utils.token_auth import token_auth, TokenData
 
 # Define Flask app
