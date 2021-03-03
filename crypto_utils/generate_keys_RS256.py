@@ -6,7 +6,7 @@ from cryptography.hazmat.backends import default_backend as crypto_default_backe
 
 from utils.constants import PUBLIC_EXPONENT, KEY_SIZE
 
-PROJECT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PROJECT_PATH: str = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 key = rsa.generate_private_key(
     backend=crypto_default_backend(),

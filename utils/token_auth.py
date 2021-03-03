@@ -9,10 +9,16 @@ from models.Passwords import Password
 from utils.base import session
 from utils.constants import ALG
 
-TokenData = namedtuple('TokenData', ['user_email', 'customer_id', 'access_type', 'exp', 'iat', 'temp_access', 'signature'])
+TokenData = namedtuple('TokenData',
+                       ['user_email', 'customer_id', 'access_type', 'exp', 'iat', 'temp_access', 'signature'])
 
 
 def token_auth(pub_key):
+    """
+    Decorator for authentication method
+    :param pub_key: str, public key (in case of RS256) or private key in case HS256
+    :return: func
+    """
     def token_auth(f):
         @wraps(f)
         def decorator(*args, **kwargs):

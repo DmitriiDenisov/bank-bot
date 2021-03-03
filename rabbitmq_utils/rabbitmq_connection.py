@@ -5,12 +5,12 @@ env = Env()
 env.read_env('.env')  # read .env file, if it exists
 
 # required variables
-HOST = env("HOST_RABBIT")
-USER = env("USER_RABBIT")
-PASSWORD = env("PASSWORD_RABBIT")
-PORT = env.int("PORT_RABBIT")
+HOST: str = env("HOST_RABBIT")
+USER: str = env("USER_RABBIT")
+PASSWORD: str = env("PASSWORD_RABBIT")
+PORT: int = env.int("PORT_RABBIT")
 # providing a default value
-enable_login = env.bool("ENABLE_LOGIN", False)  # => True
+enable_login: bool = env.bool("ENABLE_LOGIN", False)  # => True
 
 
 def get_rabbit_connection():

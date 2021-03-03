@@ -1,3 +1,5 @@
+from typing import List
+
 import requests
 from flask import Flask, request
 from flask import jsonify
@@ -20,7 +22,7 @@ from utils.token_auth import token_auth, TokenData
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
 # app.config['PUBLIC_KEY'] = PUBLIC_KEY
-app.config['PRIVATE_KEY'] = PRIVATE_KEY
+app.config['PRIVATE_KEY']: str = PRIVATE_KEY
 
 
 # Just ping
@@ -39,7 +41,7 @@ def _test():
 @app.route('/me', methods=['GET'])
 @token_auth(app.config['PRIVATE_KEY'])
 def get_me(data: TokenData):
-    custs = session.query(Customer).filter(Customer.id == data.customer_id)
+    custs: List[Customer] = session.query(Customer).filter(Customer.id == data.customer_id)
     results = [
         {
             "first_name": cust.first_name,
@@ -53,10 +55,10 @@ def get_me(data: TokenData):
 @app.route('/topup', methods=['POST'])
 @token_auth(app.config['PRIVATE_KEY'])
 def topup(data: TokenData):
-    params = TopUp(request.args)
+    params: TopUp = TopUp(request.args)
     if not params.validate():
         return jsonify({'message': 'Not valid arguments!'}), 400
-    curr_str = f"{params.currency.data.lower()}_amt"
+    curr_str: str = f"{params.currency.data.lower()}_amt"
     session.query(Balance).filter(Balance.customer_id == data.customer_id).update(
         {curr_str: (getattr(Balance, curr_str) + params.amount.data)})
     session.flush()
@@ -64,23 +66,26 @@ def topup(data: TokenData):
     return jsonify({'message': 'TopUp successful!'}), 200
 
 
-# Sign_up method. It receives login-pass, checks that this user does not exist, if exists then add it to DB and
-# create token for him
 def sign_up(form):
+    """
+    Sign_up method. It receives login-pass, checks that this user does not exist, if exists then add it to DB and
+    create token for him
+    """
     customer_id, hashed_pass = add_user(form.email.data, form.password.data)
     token = get_token(form.email.data, customer_id, hashed_pass, temp_access=False)
     return jsonify({'resp': token.decode('utf-8')}), 200
 
 
-# Auth method. Called if previous token has expired. Checks that user exist in DB and password matches and creates
-# new token
 def auth(form):
-    cust_pass = session.query(Password).filter(Password.user_email == form.email.data).join(Customer,
-                                                                                            isouter=True).first()
+    """
+    Auth method. Called if previous token has expired. Checks that user exist in DB and password matches and creates
+    new token
+    """
+    cust_pass: Password = session.query(Password).filter(Password.user_email == form.email.data).join(Customer,
+                                                                                                      isouter=True).first()
     if not cust_pass:
         error = 'Invalid Credentials. User not found. Please try again.'
         return render_template('mainpage.html', message=error), 401
-        # return make_response('Not found such user!', 401, {'WWW.Authentication': 'Basic realm: "login required"'})
     if not check_hash(form.password.data, cust_pass.user_pass):
         error = 'Invalid Credentials. Please try again.'
         return render_template('mainpage.html', message=error), 401
@@ -91,19 +96,21 @@ def auth(form):
                             temp_access=False).decode('utf-8')}), 200
 
 
-# Form for Forgot password. It generates one time link to method reset_with_token
 def forgot(form):
+    """
+    Form for Forgot password. It generates one time link to method reset_with_token
+    """
     # Check if customer exists in Password table
     cust: Password = session.query(Password).filter(Password.user_email == form.email.data).first()
     if cust:
-        token = get_token(cust.user_email, cust.customer_id, cust.user_pass, temp_access=True)
+        token: str = get_token(cust.user_email, cust.customer_id, cust.user_pass, temp_access=True)
         recover_url = url_for(
             'reset_with_token',
             token=token,
             _external=True)
         return jsonify({'recover_link': recover_url}), 200
     else:
-        error = 'User not found!'
+        error: str = 'User not found!'
         return render_template('mainpage.html', message=error), 401
 
 
@@ -112,12 +119,12 @@ def forgot(form):
 @token_auth(app.config['PRIVATE_KEY'])
 def reset_with_token(data: TokenData):
     if request.method == 'POST':
-        form = ResetPass(request.form)
+        form: ResetPass = ResetPass(request.form)
         if not form.validate():
             return jsonify({'message': 'Not valid arguments!'}), 400
 
         # get hash of new password
-        hashed_pass = get_hash(form.password1.data)
+        hashed_pass: str = get_hash(form.password1.data)
         # Update user's hash pass in DB
         session.query(Password).filter(Password.customer_id == data.customer_id).update({"user_pass": hashed_pass})
         session.flush()
@@ -132,28 +139,28 @@ def _main():
     if request.method == 'POST':
         resp = request.form
         if resp['method'] == 'auth':
-            form = AuthSchemaForm(request.form)
+            form: AuthSchemaForm = AuthSchemaForm(request.form)
             if not form.validate():
-                error = 'Username does not match email pattern'
+                error: str = 'Username does not match email pattern'
                 return render_template('mainpage.html', message=error), 400
             return auth(form)
         elif resp['method'] == 'sign-up':
-            form = SignUpSchema(request.form)
+            form: SignUpSchema = SignUpSchema(request.form)
             if not form.validate():
                 if form.errors.get('password'):
-                    error = f'Password(s): {form.errors.get("password")[0]}'
+                    error: str = f'Password(s): {form.errors.get("password")[0]}'
                     return render_template('mainpage.html', message=error), 400
                 elif form.errors.get('email'):
-                    error = f'Email: {form.errors.get("email")[0]}'
+                    error: str = f'Email: {form.errors.get("email")[0]}'
                     return render_template('mainpage.html', message=error), 400
                 else:
-                    error = f'Email: {form.errors.get("email")[0]}'
+                    error: str = f'Email: {form.errors.get("email")[0]}'
                     return render_template('mainpage.html', message=error), 400
             return sign_up(form)
         else:
-            form = ForgotPass(request.form)
+            form: ForgotPass = ForgotPass(request.form)
             if not form.validate():
-                error = 'Not valid email!'
+                error: str = 'Not valid email!'
                 return render_template('mainpage.html', message=error), 400
             return forgot(form)
     return render_template('mainpage.html', message=''), 200
@@ -178,16 +185,16 @@ def get_all_custs(data: TokenData):
 @app.route('/do_transaction', methods=['POST'])
 @token_auth(app.config['PRIVATE_KEY'])
 def do_transaction(data: TokenData):
-    params = TransactionSchema(request.args)
+    params: TransactionSchema = TransactionSchema(request.args)
     if not params.validate():
         return jsonify({'message': 'Not valid arguments!'}), 400
 
     # Get parameters from args
-    amount = params.amount.data
-    currency = f'{params.currency.data.lower()}_amt'
+    amount: float = params.amount.data
+    currency: str = f'{params.currency.data.lower()}_amt'
 
     # Check if customer has enough balance
-    balance = session.query(Balance).filter(Balance.customer_id == data.customer_id).first()
+    balance: Balance = session.query(Balance).filter(Balance.customer_id == data.customer_id).first()
     if getattr(balance, currency) < amount:
         return jsonify({'message': 'Not enough money on your balance!'}), 400
 
@@ -204,7 +211,7 @@ def do_transaction(data: TokenData):
 @token_auth(app.config['PRIVATE_KEY'])
 def own_transfer(data: TokenData):
     # Get params
-    params = CurrencyChangeSchema(request.args)
+    params: CurrencyChangeSchema = CurrencyChangeSchema(request.args)
     if not params.validate():
         return jsonify({'message': 'Not valid arguments!'}), 400
 
@@ -213,10 +220,10 @@ def own_transfer(data: TokenData):
                             params={'curr_from': params.curr_from.data.upper(), 'curr_to': params.curr_to.data.upper()})
     if response.status_code == 404:
         return jsonify({'message': 'Internal currency service is down'}), 500
-    rate = response.json()['rate']
-    add = round(params.amount.data * rate, 2)
-    from_str = f"{params.curr_from.data.lower()}_amt"
-    to_str = f"{params.curr_to.data.lower()}_amt"
+    rate: float = response.json()['rate']
+    add: float = round(params.amount.data * rate, 2)
+    from_str: str = f"{params.curr_from.data.lower()}_amt"
+    to_str: str = f"{params.curr_to.data.lower()}_amt"
 
     # Check if user has enough money on his balance
     cust: Balance = session.query(Balance).filter(Balance.customer_id == data.customer_id).first()
@@ -236,7 +243,7 @@ def own_transfer(data: TokenData):
 @app.route('/get_trans', methods=['GET'])
 @token_auth(app.config['PRIVATE_KEY'])
 def get_trans(data: TokenData):
-    transactions = session.query(Transaction).filter(
+    transactions: List[Transaction] = session.query(Transaction).filter(
         (Transaction.customer_id_to == data.customer_id) | (Transaction.customer_id_from == data.customer_id)).all()
     results = [
         {'customer_id_from': trans.customer_id_from,
@@ -254,7 +261,7 @@ def get_trans(data: TokenData):
 @token_auth(app.config['PRIVATE_KEY'])
 def my_bal(data: TokenData):
     balance: Balance = session.query(Balance).filter(Balance.customer_id == data.customer_id).first()
-    results = {'aed_amt': balance.aed_amt, 'usd_amt': balance.usd_amt, 'eur_amt': balance.eur_amt}
+    results: dict = {'aed_amt': balance.aed_amt, 'usd_amt': balance.usd_amt, 'eur_amt': balance.eur_amt}
     return jsonify(results), 200
 
 
@@ -266,7 +273,7 @@ def delete_user(data: TokenData):
         return jsonify({'message': 'Not valid request!'}), 400
     if data.access_type != 1:
         return jsonify({'resp': "You don't have rights for this!"}), 400
-    customer_id = request.args.get('customer_id')
+    customer_id: int = request.args.get('customer_id')
     rowcount = session.query(Customer).filter(Customer.id == customer_id).delete()
     session.commit()
     if rowcount > 0:
