@@ -19,8 +19,7 @@ client = app.test_client()
 
 env = Env()
 env.read_env('.env')  # read .env file, if it exists
-TEST_TOKEN = env("TEST_TOKEN")
-
+TEST_TOKEN: str = env("TEST_TOKEN")
 
 @pytest.mark.parametrize(
     "params",
@@ -34,6 +33,7 @@ def test_get_trans(capsys, caplog, params):
     print('AAAA')
     print(params)
     print('BBB')
+    # TEST_TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImtpZCI6Ijc0NzJjM2Q4Zjk1YjRlNTc5YTk3MTFlYTE2ZGVmN2I4In0.eyJ1c2VyX2VtYWlsIjoidGVzdEB1c2VyLnJ1IiwiY3VzdG9tZXJfaWQiOjY1LCJhY2Nlc3NfdHlwZSI6MCwidGVtcF9hY2Nlc3MiOmZhbHNlLCJleHAiOjE2MTQ1ODcyNTMsImlhdCI6MTYxNDMyODA1Mywic2lnbmF0dXJlIjoiJDJhJDEyJDEyQzBFdWR0REQxNXouSWJ6U2ZMLk81dE9aMXlQdXdub1FoSzF5a2lPclZzbS5GY0NRV2YyIn0.we1So3dRzNxgb0BhbfqyLESus_7 - VSjJNxKOwRdqIz8'
     response = client.get('/get_trans',
                           headers={
                               'key': TEST_TOKEN})

@@ -19,6 +19,7 @@ def token_auth(pub_key):
     :param pub_key: str, public key (in case of RS256) or private key in case HS256
     :return: func
     """
+
     def token_auth(f):
         @wraps(f)
         def decorator(*args, **kwargs):
@@ -44,7 +45,7 @@ def token_auth(pub_key):
             # 7. Compare result from 6 and 7. If equal => legitimate
             try:
                 # Get Payload
-                data = jwt.decode(token, pub_key, algorithms=[ALG])
+                data = jwt.decode(token, pub_key, algorithms=[ALG])  # options={"verify_exp": False}
             except ExpiredSignatureError:
                 return jsonify({'message': 'Signature has expired! Try auth method'}), 401
             except:
