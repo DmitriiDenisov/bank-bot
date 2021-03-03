@@ -37,6 +37,7 @@ def test_get_trans(capsys, caplog, params):
     response = client.get('/get_trans',
                           headers={
                               'key': TEST_TOKEN})
+    print(response.data)
     assert response.status_code == 200
     assert isinstance(json.loads(response.data.decode('utf-8'))['results'], list)
 
@@ -53,6 +54,7 @@ def test_my_bal(capsys, caplog, params):
                           # content_type='multipart/form-data',
                           headers={
                               'key': TEST_TOKEN})
+    print(response.data)
     assert response.status_code == 200
     assert json.loads(response.data.decode('utf-8')) == {
         "aed_amt": 30.0,
@@ -73,6 +75,7 @@ def test_own_transfer(capsys, caplog, params):
                            # content_type='multipart/form-data',
                            headers={
                                'key': TEST_TOKEN})
+    print(response.data)
     assert response.status_code == 200
     assert json.loads(response.data.decode('utf-8')) == {"message": "Success"}
 
@@ -83,6 +86,7 @@ def test_own_transfer(capsys, caplog, params):
                            # content_type='multipart/form-data',
                            headers={
                                'key': TEST_TOKEN})
+    print(response.data)
     assert response.status_code == 200
     assert json.loads(response.data.decode('utf-8')) == {"message": "Success"}
 
@@ -99,6 +103,7 @@ def test_topup_and_transaction(capsys, caplog, params):
                            # content_type='multipart/form-data',
                            headers={
                                'key': TEST_TOKEN})
+    print(response.data)
     assert response.status_code == 200
     assert json.loads(response.data.decode('utf-8')
                       ) == {"message": "TopUp successful!"}
@@ -110,6 +115,7 @@ def test_topup_and_transaction(capsys, caplog, params):
                            # content_type='multipart/form-data',
                            headers={
                                'key': TEST_TOKEN})
+    print(response.data)
     assert response.status_code == 200
     assert json.loads(response.data.decode('utf-8')
                       ) == {"message": "Transaction made!"}
