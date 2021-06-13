@@ -5,8 +5,8 @@ from wtforms.fields.html5 import EmailField
 import wtforms_json
 from wtforms.validators import EqualTo, InputRequired, ValidationError, NumberRange
 
-from models.Passwords import Password
-from models.customer import Customer
+from models.Password import Password
+from models.Customer import Customer
 from utils.base import session
 
 wtforms_json.init()

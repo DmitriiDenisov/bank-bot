@@ -5,7 +5,7 @@ import jwt
 from flask import request, jsonify
 
 from crypto_utils.hash_password import check_hash
-from models.Passwords import Password
+from models.Password import Password
 from utils.base import session
 from utils.constants import ALG
 

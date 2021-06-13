@@ -2,9 +2,9 @@ import datetime
 from typing import Tuple
 
 from crypto_utils.hash_password import get_hash
-from models.Passwords import Password
-from models.balances import Balance
-from models.customer import Customer
+from models.Password import Password
+from models.Balance import Balance
+from models.Customer import Customer
 from utils.base import session
 
 

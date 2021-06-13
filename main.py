@@ -3,7 +3,7 @@ from typing import List
 import requests
 from flask import Flask, request
 from flask import jsonify
-from models.transactions import Transaction
+from models.Transaction import Transaction
 from rabbitmq_utils.rmq_utils import publish_message
 from utils.constants import PRIVATE_KEY, HOST_CURR_SERV, PORT_CURR_SERV
 from utils.schemas import AuthSchemaForm, SignUpSchema, ForgotPass, ResetPass, TransactionSchema, CurrencyChangeSchema, \
@@ -12,9 +12,9 @@ from utils.add_user import add_user
 from utils.base import session
 from crypto_utils.generate_token import get_token
 from crypto_utils.hash_password import check_hash, get_hash
-from models.Passwords import Password
-from models.balances import Balance
-from models.customer import Customer
+from models.Password import Password
+from models.Balance import Balance
+from models.Customer import Customer
 from flask import url_for, render_template
 from utils.token_auth import token_auth, TokenData
 

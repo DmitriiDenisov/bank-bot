@@ -8,8 +8,8 @@ from collections import namedtuple
 
 from sqlalchemy import case
 
-from models.balances import Balance
-from models.transactions import Transaction
+from models.Balance import Balance
+from models.Transaction import Transaction
 from rabbitmq_utils.rabbitmq_connection import get_rabbit_connection
 from utils.base import session
 

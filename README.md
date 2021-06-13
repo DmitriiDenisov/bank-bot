@@ -95,7 +95,7 @@ This script uses bcrypt library which adds salt (randomly generated string) to p
 Also Libraries like bcrypt are smart enough to store the salt IN the resulting string so that developers don’t need to do the extra work."
 [Bcrypt Library Tutorial](https://hackernoon.com/hashing-passwords-in-python-bcrypt-tutorial-with-examples-77dh36ef)
 
- file `api_queries.py` - main file which uses everything else. In order to run: `python api_queries.py`
+ file `main.py` - main file which uses everything else. In order to run: `python3 main.py`
 
 More about electronic digital signature [RUS](https://www.youtube.com/watch?v=Y5G7hg9CGIc)
 

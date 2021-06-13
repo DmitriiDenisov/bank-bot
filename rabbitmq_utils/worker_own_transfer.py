@@ -6,7 +6,7 @@ sys.path.append(PROJECT_PATH)
 import json
 from collections import namedtuple
 
-from models.balances import Balance
+from models.Balance import Balance
 from rabbitmq_utils.rabbitmq_connection import get_rabbit_connection
 from utils.base import session
 
