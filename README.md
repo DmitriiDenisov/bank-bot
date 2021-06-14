@@ -19,7 +19,8 @@
 
 1. Download docker-compose.yml file from [Pastebin](https://pastebin.com/D5uggnYc) 
 
-2. Create `.env` file. You can download it from releases in this repo, it has only hidden file .env inside
+2. Create `.env` file
+You can [download it here](https://github.com/DmitriiDenisov/bank-bot/releases), it has only hidden file .env inside
 It should look like this:
 ```
 # Config for curr-serv
