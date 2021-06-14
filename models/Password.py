@@ -14,8 +14,3 @@ class Password(Base):
     user_email = Column(String)
     user_pass = Column(String)
     customer = relationship("Customer", backref=backref("passwd", uselist=False))
-
-    def __init__(self, customer, user_email, user_pass):
-        self.customer = customer
-        self.user_email = user_email
-        self.user_pass = user_pass

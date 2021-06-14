@@ -40,7 +40,8 @@ def get_token(user_email: str, customer_id: int, hashed_pass: str, access_type: 
                        key=PRIVATE_KEY,
                        algorithm=ALG)
     # Add token to DB
-    new_token: Token = Token(customer_id, token_uuid, creation_date, exp_date)
+    new_token: Token = Token(customer_id=customer_id, token_uuid=token_uuid, creation_date=creation_date,
+                             exp_date=exp_date)
     session.add_all([new_token])
     session.flush()
     session.commit()

@@ -33,6 +33,8 @@ HOST_CURR_SERV=localhost # host of curr-serv
 PORT_CURR_SERV=5004 # port of curr-serv
 URL_DB=postgresql://dmitryhse:mypassword@localhost:5432/bank_bot_db # DB URL and credentials
 KEY_HS256=bcae2a8c35a0de3353977ed7af0de10731f62500e4588ca238 # Secret KEY which is used in `token_auth` method for decoding of JWT key
+# For tests: is token for account for email test@user.com - customer_id:65
+TEST_TOKEN=eyJ0eXAiO
 ```
 3. Run all services: `docker-compose up -d`
 4. (optional) if you want multiple docker containers: 

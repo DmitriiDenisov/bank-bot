@@ -46,7 +46,8 @@ def callback(ch, method, properties, body):
     """
 
     # Create transaction and add it to Transactions table
-    new_transaction = Transaction(data.customer_id, data.customer_id_to, **{data.currency: data.amount})
+    new_transaction = Transaction(customer_id_from=data.customer_id, customer_id_to=data.customer_id_to,
+                                  **{data.currency: data.amount})
     session.add_all([new_transaction])
     session.commit()
 

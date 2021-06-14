@@ -1,4 +1,5 @@
 from collections import namedtuple
+from typing import NamedTuple
 from functools import wraps
 from jwt.exceptions import ExpiredSignatureError
 import jwt
@@ -9,8 +10,15 @@ from models.Password import Password
 from utils.base import session
 from utils.constants import ALG
 
-TokenData = namedtuple('TokenData',
-                       ['user_email', 'customer_id', 'access_type', 'exp', 'iat', 'temp_access', 'signature'])
+
+class TokenData(NamedTuple):
+    user_email: str
+    customer_id: int
+    access_type: int
+    exp: int
+    iat: int
+    temp_access: bool
+    signature: str
 
 
 def token_auth(pub_key):

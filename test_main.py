@@ -19,6 +19,7 @@ client = app.test_client()
 
 env = Env()
 env.read_env('.env')  # read .env file, if it exists
+# TEST_TOKEN is token for account for email test@user.com - customer_id:65
 TEST_TOKEN: str = env("TEST_TOKEN")
 
 @pytest.mark.parametrize(

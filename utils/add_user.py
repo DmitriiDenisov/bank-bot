@@ -17,11 +17,13 @@ def add_user(user_email: str, user_pass: str) -> Tuple[int, str]:
     """
     hashed_pass: str = get_hash(user_pass)
     # ADD to DB new customer
-    new_cust: Customer = Customer('New_user', 'flask_August', '@test', 0, datetime.datetime.utcnow())
+    new_cust: Customer = Customer(first_name='New_user', second_name='flask_August', nickname_telegram='@test',
+                                  access_type=0,
+                                  join_date=datetime.datetime.utcnow())
     # ADD new bal to user
-    new_bal: Balance = Balance(new_cust, 0, 0, 0)
+    new_bal: Balance = Balance(customer=new_cust, usd_amt=0, eur_amt=0, aed_amt=0)
     # ADD new password
-    new_pass: Password = Password(new_cust, user_email, hashed_pass)
+    new_pass: Password = Password(customer=new_cust, user_email=user_email, user_pass=hashed_pass)
     # add_all is similar to git add ...
     session.add_all([new_cust])
     # flush is similar to git commit ...

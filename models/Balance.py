@@ -17,9 +17,3 @@ class Balance(Base):
     usd_amt = Column(Float)
     eur_amt = Column(Float)
     aed_amt = Column(Float)
-
-    def __init__(self, customer, usd_amt, eur_amt, aed_amt):
-        self.customer = customer
-        self.usd_amt = usd_amt
-        self.eur_amt = eur_amt
-        self.aed_amt = aed_amt

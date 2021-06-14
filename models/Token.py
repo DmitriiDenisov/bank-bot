@@ -16,9 +16,3 @@ class Token(Base):
     exp_date = Column(DateTime)
 
     customer = relationship("Customer", backref="token", uselist=False)
-
-    def __init__(self, customer_id, token_uuid, creation_date, exp_date):
-        self.customer_id = customer_id
-        self.token_uuid = token_uuid
-        self.creation_date = creation_date
-        self.exp_date = exp_date
